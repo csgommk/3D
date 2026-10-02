@@ -30,8 +30,9 @@
 #  Wheels are built separately as solids of revolution: 275/45 R22 tyre with a
 #  printable tread, concave five-Y-spoke rim, slotted disc and sculpted caliper.
 #
-#  Requires: numpy, scipy, scikit-image, manifold3d, shapely; fast-simplification (optional)
+#  Requires: numpy, scipy, scikit-image, manifold3d, shapely; fast-simplification (optional); trimesh (--part kit)
 #  Usage:    python3 solar_suv_v4_1to20.py --out stl              all parts (about 2 minutes)
+#            python3 solar_suv_v4_1to20.py --out stl --part kit   multi-part model kit -> stl/kit/ (see KIT.md)
 #            python3 solar_suv_v4_1to20.py --res 12 --part body   quick draft of the body
 #            --part all|body|split|hollow|wheel|pins|axles     --mirrors mirror|camera|none
 #  Outputs:  body_1to20.stl (one piece), body_front/rear_1to20.stl (B-pillar split, 3 pins),
@@ -880,7 +881,9 @@ def spokes_2d():
                                   tuple(p + 2.0*d - 0.92*m), tuple(p - 0.92*m), tuple(s - 1.05*m)]))
     return unary_union(parts)
 
-def caliper_sdf(X, Y, Z, phc, rc=11.15, hr=1.75, half_arc=3.95, z0=None, z1=None, rnd=0.45):
+DISC_R, CAL_RC = 10.0, 9.6     # rotor radius (400 mm disc full size) and caliper centre radius, model mm
+
+def caliper_sdf(X, Y, Z, phc, rc=CAL_RC, hr=1.75, half_arc=3.95, z0=None, z1=None, rnd=0.45):
     r = np.sqrt(X*X + Y*Y)
     th = np.arctan2(Y, X) - phc
     th = (th + np.pi) % (2*np.pi) - np.pi
@@ -937,22 +940,24 @@ def build_wheel(caliper_angle=126.0):
                       [(rr - 0.3, W + 2.0)])
     bevel = tag(extrude_xy(win.buffer(0.20, join_style=1), W - 5.6, W + 1.0) ^ skin, "rim")
     rim = Manifold.batch_boolean([rim, win_cut, bevel], OpType.Subtract)
-    # ---- brake disc behind the spokes: friction ring with ten curved slots, hat groove
-    disc = Point(0, 0).buffer(12.35, resolution=128).difference(Point(0, 0).buffer(5.0, resolution=64))
+    # ---- brake disc behind the spokes: 400 x 34 mm vented rotor (friction ring 140-200 mm radius)
+    #      with ten curved slots and a hat groove
+    disc = Point(0, 0).buffer(DISC_R, resolution=128).difference(Point(0, 0).buffer(5.0, resolution=64))
     disc = tag(extrude_xy(disc, W - 6.0, W - 4.31), "disc")
     dcut = [extrude_xy(Point(0, 0).buffer(6.65, resolution=96).difference(Point(0, 0).buffer(6.35, resolution=96)),
                        W - 4.52, W - 4.0)]
     for i in range(10):
         a0 = math.radians(i*36.0)
-        arc = [(r*math.cos(a0 + 0.055*(r - 7.6)), r*math.sin(a0 + 0.055*(r - 7.6))) for r in np.linspace(7.7, 11.8, 12)]
+        arc = [(r*math.cos(a0 + 0.07*(r - 7.0)), r*math.sin(a0 + 0.07*(r - 7.0))) for r in np.linspace(7.25, DISC_R - 0.45, 12)]
         dcut.append(extrude_xy(LineString(arc).buffer(0.17, cap_style=1), W - 4.55, W - 4.0))
     disc = disc - tag(Manifold.batch_boolean(dcut, OpType.Add), "discwall")
-    # ---- caliper (sculpted SDF block) in one window, top 0.45 mm behind the spoke faces
+    # ---- 6-piston caliper (sculpted SDF block) straddling the rotor rim in one window, top 0.45 mm
+    #      behind the spoke faces
     phc = math.radians(caliper_angle)
     zc0, zc1 = W - 5.9, W - 3.05
-    c = (11.15*math.cos(phc), 11.15*math.sin(phc))
+    c = (CAL_RC*math.cos(phc), CAL_RC*math.sin(phc))
     lo = (c[0] - 4.8137, c[1] - 4.8071, zc0 - 0.2213); hi = (c[0] + 4.8, c[1] + 4.8, zc1 + 0.2)
-    cal = tag(sdf_solid(lambda X, Y, Z: caliper_sdf(X, Y, Z, phc, z0=zc0, z1=zc1), lo, hi, 0.06), "caliper")
+    cal = tag(sdf_solid(lambda X, Y, Z: caliper_sdf(X, Y, Z, phc, rc=CAL_RC, z0=zc0, z1=zc1), lo, hi, 0.06), "caliper")
     # ---- lug nuts and hub bore
     nuts = []
     for k in range(5):
@@ -991,7 +996,8 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description="Solar SUV v4, 1:20 printable model generator")
     ap.add_argument("--out", default="stl", help="output folder")
     ap.add_argument("--res", type=float, default=6.0, help="field grid in full-size mm (6 = 0.3 mm on the model)")
-    ap.add_argument("--part", default="all", choices=["all", "body", "split", "hollow", "wheel", "pins", "axles"])
+    ap.add_argument("--part", default="all", choices=["all", "body", "split", "hollow", "wheel", "pins", "axles", "kit"],
+                    help="kit = the multi-part model kit (chassis, cabin, clips, doors, hood, canopy...) from solar_suv_v4_kit.py")
     ap.add_argument("--mirrors", default="mirror", choices=["mirror", "camera", "none"])
     ap.add_argument("--no-detail", action="store_true", help="plain skin without engraved detail")
     ap.add_argument("--reduce", type=float, default=0.75, help="fraction of marching-cubes triangles removed by quadric decimation")
@@ -999,6 +1005,14 @@ def main(argv=None):
     os.makedirs(a.out, exist_ok=True)
     out = lambda n: os.path.join(a.out, n)
     t0 = time.time()
+    if a.part == "kit":
+        import solar_suv_v4_kit as kit
+        kit.kit_main(os.path.join(a.out, "kit"), a.res, a.mirrors)
+        w, _ = build_wheel()
+        write_stl(w, out("wheel_1to20.stl")); write_stl(wheels_x4(w), out("wheels_x4_1to20.stl"))
+        write_stl(axles(), out(f"axles_x2_{AXLE_LEN:.2f}mm.stl"))
+        print(f"done in {time.time() - t0:.0f} s -> {os.path.abspath(a.out)}")
+        return
     if a.part in ("all", "body", "split", "hollow"):
         print(f"body at {a.res} mm grid ({a.res/SCALE:.2f} mm on the model)")
         body, _, cav = build_body(a.res, a.mirrors, a.reduce, not a.no_detail,

@@ -1,0 +1,17 @@
+=== FULL PROMPT (image / text-to-3D tools without a length limit) ===
+Master-grade technical cutaway model of a modern solar electric SUV, visible interior cabin, thermal cooling lines, exposed battery cell tray, front/rear electric motors, high-voltage orange wiring harness, 1:20 scale modular 3D printable model kit with extreme engineering accuracy.
+Original design, no badges or brand styling. A 4.8 m midsize SUV with pearl-white smooth class-A body panels, dark blue curved solar cell arrays molded into the hood, roof and tailgate, full-width black light band and wraparound red tail bar. The left half of the body is cut away along the centre line and the roof, doors and front fenders are lifted off as separate kit parts, revealing:
+- a flat skateboard chassis with an aluminium battery tray holding 16 prismatic modules (224 blue cells with grooved cell gaps, silver busbars, green cell-monitoring boards), three cross-members, a centre duct with orange busbars, a battery junction box and BMS at the front of the pack;
+- a front e-axle (finned cylindrical motor, gearbox with sump, silver inverter on top, three short orange phase leads) and a larger rear e-axle behind the rear axle;
+- MacPherson front struts and multi-link rear coilovers with red springs, black control arms, an electric steering rack with tie rods, sway bars, and slotted brake rotors with six-piston calipers behind the spokes;
+- a front-end module with radiator and twin fans, a heat-pump module (compressor, chiller, accumulator, coolant valve, reservoir) and a charging stack (charger, solar charge controller, 12 V battery) under the hood;
+- blue and red coolant hoses from the radiator to the battery cold plates and both motors, green refrigerant lines to the cabin HVAC unit;
+- thick orange high-voltage cables from the battery to both inverters and the charging stack, yellow solar cables running down the A-pillars;
+- a five-seat cabin with grey bucket seats, rear bench, floating centre console with cup holders, dashboard with a driver display and a large central touchscreen, steering wheel with column stalks, floor pedals and seat-belt retractors.
+Studio lighting, neutral grey background, three-quarter front view from above, crisp edges, clean colour-coded systems, high detail, model-kit sprue-free presentation.
+
+=== SHORT PROMPT (<= 800 characters, e.g. Meshy) ===
+Master-grade technical cutaway model of a modern solar electric SUV, visible interior cabin, thermal cooling lines, exposed battery cell tray, front/rear electric motors, high-voltage orange wiring harness, 1:20 scale modular 3D printable model kit with extreme engineering accuracy. Original pearl-white SUV, blue solar cells on hood, roof and tailgate. Left body half cut away, roof and doors lifted off. Skateboard chassis with 16 blue battery modules, twin e-axles with inverters, red coil springs, radiator and heat pump up front, blue/red coolant hoses, green refrigerant lines, yellow solar cables, five seats, dashboard with screens. Flat base, watertight solid parts.
+
+=== NEGATIVE PROMPT (tools that support one) ===
+logos, badges, brand names, text, people, floating parts, thin wires, hollow non-manifold surfaces, cartoon style, toy proportions, blurry details
