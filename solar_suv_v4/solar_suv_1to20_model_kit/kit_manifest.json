@@ -1,6 +1,6 @@
 {
  "generator": "generate_model_kit.py",
- "script_sha1": "2255538da32f",
+ "script_sha1": "3e216d4efcc4",
  "res": 6.0,
  "mirrors": "mirror",
  "units": "model mm (1:20)",
@@ -38,13 +38,13 @@
    "key": "baseplate",
    "orient": "flat underside on the bed",
    "mesh": {
-    "triangles": 100210,
+    "triangles": 100536,
     "watertight": true,
     "edges_2_manifold": true,
     "winding_consistent": true,
     "shells": 1,
     "shells_expected": 1,
-    "volume_cm3": 34.68,
+    "volume_cm3": 34.67,
     "size_mm": [
      225.21,
      98.2,
@@ -53,10 +53,10 @@
     "bed_z": 0.0,
     "bed_contact_mm2": 17225.2,
     "min_shell_bed_contact_mm2": 17225.2,
-    "mb": 4.78
+    "mb": 4.79
    },
    "export": {
-    "pinches_separated": 14,
+    "pinches_separated": 12,
     "slivers_dropped": 0,
     "repaired_faces": 0,
     "dropped_pieces": 0,
@@ -126,22 +126,22 @@
    "key": "rear_sub",
    "orient": "subframe bars on the bed",
    "mesh": {
-    "triangles": 13110,
+    "triangles": 13094,
     "watertight": true,
     "edges_2_manifold": true,
     "winding_consistent": true,
     "shells": 1,
     "shells_expected": 1,
-    "volume_cm3": 9.04,
+    "volume_cm3": 9.25,
     "size_mm": [
      60.5,
      69.0,
      28.6
     ],
     "bed_z": 0.0,
-    "bed_contact_mm2": 1217.0,
-    "min_shell_bed_contact_mm2": 1217.0,
-    "mb": 0.63
+    "bed_contact_mm2": 1252.9,
+    "min_shell_bed_contact_mm2": 1252.9,
+    "mb": 0.62
    },
    "export": {
     "pinches_separated": 6,
@@ -390,7 +390,7 @@
    "key": "floor_tub",
    "orient": "cabin floor flat on the bed; cargo deck upside down beside it",
    "mesh": {
-    "triangles": 10524,
+    "triangles": 10044,
     "watertight": true,
     "edges_2_manifold": true,
     "winding_consistent": true,
@@ -405,7 +405,7 @@
     "bed_z": 0.0,
     "bed_contact_mm2": 10147.4,
     "min_shell_bed_contact_mm2": 2315.4,
-    "mb": 0.5
+    "mb": 0.48
    },
    "export": {
     "pinches_separated": 8,
@@ -421,8 +421,8 @@
     "bridge_area_mm2": 54.4,
     "max_bridge_mm": 6.2,
     "long_bridges": 0,
-    "cantilevers": 0,
-    "max_cantilever_mm": 0.0,
+    "cantilevers": 1,
+    "max_cantilever_mm": 0.85,
     "islands": 0,
     "max_island_mm2": 0.0
    }
@@ -521,7 +521,7 @@
    "key": "dashboard",
    "orient": "dashboard upright; steering wheel face down beside it",
    "mesh": {
-    "triangles": 6840,
+    "triangles": 6912,
     "watertight": true,
     "edges_2_manifold": true,
     "winding_consistent": true,
@@ -608,22 +608,22 @@
    "key": "canopy",
    "orient": "flat belt-line underside on the bed",
    "mesh": {
-    "triangles": 793818,
+    "triangles": 738110,
     "watertight": true,
     "edges_2_manifold": true,
     "winding_consistent": true,
     "shells": 1,
     "shells_expected": 1,
-    "volume_cm3": 245.66,
+    "volume_cm3": 245.64,
     "size_mm": [
      169.34,
      107.53,
      30.2
     ],
     "bed_z": 0.0,
-    "bed_contact_mm2": 11884.4,
-    "min_shell_bed_contact_mm2": 11884.4,
-    "mb": 37.85
+    "bed_contact_mm2": 11602.6,
+    "min_shell_bed_contact_mm2": 11602.6,
+    "mb": 35.2
    },
    "export": {
     "pinches_separated": 50,
@@ -652,13 +652,13 @@
    "key": "hood",
    "orient": "flat underside on the bed",
    "mesh": {
-    "triangles": 52926,
+    "triangles": 52794,
     "watertight": true,
     "edges_2_manifold": true,
     "winding_consistent": true,
     "shells": 1,
     "shells_expected": 1,
-    "volume_cm3": 13.63,
+    "volume_cm3": 13.64,
     "size_mm": [
      55.71,
      81.5,
@@ -680,8 +680,8 @@
    "path": "stls/04_body_shell/hood_solar_bonnet.stl",
    "installed_z_offset_mm": 36.9,
    "support": {
-    "bridges": 2,
-    "bridge_area_mm2": 15.4,
+    "bridges": 4,
+    "bridge_area_mm2": 30.9,
     "max_bridge_mm": 3.41,
     "long_bridges": 0,
     "cantilevers": 0,
@@ -740,13 +740,13 @@
    "key": "tail",
    "orient": "upright on its bottom edge",
    "mesh": {
-    "triangles": 169076,
+    "triangles": 168944,
     "watertight": true,
     "edges_2_manifold": true,
     "winding_consistent": true,
     "shells": 1,
     "shells_expected": 1,
-    "volume_cm3": 10.02,
+    "volume_cm3": 10.03,
     "size_mm": [
      25.78,
      68.89,
@@ -768,8 +768,8 @@
    "path": "stls/04_body_shell/tailgate_rear_hatch.stl",
    "installed_z_offset_mm": 33.75,
    "support": {
-    "bridges": 1,
-    "bridge_area_mm2": 75.0,
+    "bridges": 3,
+    "bridge_area_mm2": 90.4,
     "max_bridge_mm": 8.16,
     "long_bridges": 0,
     "cantilevers": 21,
@@ -870,13 +870,13 @@
    "key": "lenses",
    "orient": "upright on their bottom edges",
    "mesh": {
-    "triangles": 10332,
+    "triangles": 14692,
     "watertight": true,
     "edges_2_manifold": true,
     "winding_consistent": true,
     "shells": 2,
     "shells_expected": 2,
-    "volume_cm3": 0.26,
+    "volume_cm3": 0.33,
     "size_mm": [
      233.26,
      78.0,
@@ -885,10 +885,10 @@
     "bed_z": 0.0,
     "bed_contact_mm2": 246.2,
     "min_shell_bed_contact_mm2": 111.3,
-    "mb": 0.49
+    "mb": 0.7
    },
    "export": {
-    "pinches_separated": 0,
+    "pinches_separated": 62,
     "slivers_dropped": 0,
     "repaired_faces": 0,
     "dropped_pieces": 0,
@@ -897,14 +897,14 @@
    "scale": "ok (1:20, \u00b10.004 mm)",
    "path": "stls/05_wheels_and_hardware/clear_lens_headlights_taillights.stl",
    "support": {
-    "bridges": 0,
-    "bridge_area_mm2": 0,
-    "max_bridge_mm": 0.0,
+    "bridges": 1,
+    "bridge_area_mm2": 0.8,
+    "max_bridge_mm": 1.4,
     "long_bridges": 0,
     "cantilevers": 0,
     "max_cantilever_mm": 0.0,
-    "islands": 0,
-    "max_island_mm2": 0.0
+    "islands": 23,
+    "max_island_mm2": 0.08
    }
   }
  ],
@@ -950,7 +950,7 @@
   "eaxle_front > baseplate": 293.991,
   "eaxle_rear > baseplate": 159.065,
   "front_sub > baseplate": 703.9,
-  "rear_sub > baseplate": 665.394,
+  "rear_sub > baseplate": 680.889,
   "tray > baseplate": 3894.836,
   "tray > modules": 1378.858,
   "tray > dashboard": 4.775,
@@ -1342,7 +1342,7 @@
     "female": "rear_subframe_suspension",
     "p": [
      3540.0,
-     360.0,
+     425.0,
      249.0
     ],
     "axis": [
@@ -1370,7 +1370,7 @@
     "female": "rear_subframe_suspension",
     "p": [
      3540.0,
-     360.0,
+     425.0,
      279.0
     ],
     "axis": [
@@ -1398,7 +1398,7 @@
     "female": "rear_subframe_suspension",
     "p": [
      3540.0,
-     -360.0,
+     -425.0,
      249.0
     ],
     "axis": [
@@ -1426,7 +1426,7 @@
     "female": "rear_subframe_suspension",
     "p": [
      3540.0,
-     -360.0,
+     -425.0,
      279.0
     ],
     "axis": [
@@ -3674,6 +3674,10 @@
     "measured_gap_mm": 0.242
    }
   ],
+  "lens_heights_mm": [
+   2.2,
+   2.6
+  ],
   "female_features_checked": 89,
   "female_features_failed": 0
  },
@@ -3683,7 +3687,7 @@
    "length": 3,
    "head": "button head",
    "group": "rear_sub",
-   "where": "rear_subframe_suspension to baseplate boss at x 3540, y 360 (from above)",
+   "where": "rear_subframe_suspension to baseplate boss at x 3540, y 425 (from above)",
    "clamp_mm": 0.85,
    "engagement_mm": 1.9
   },
@@ -3692,7 +3696,7 @@
    "length": 3,
    "head": "button head",
    "group": "rear_sub",
-   "where": "rear_subframe_suspension to baseplate boss at x 3540, y -360 (from above)",
+   "where": "rear_subframe_suspension to baseplate boss at x 3540, y -425 (from above)",
    "clamp_mm": 0.85,
    "engagement_mm": 1.9
   },
@@ -3720,8 +3724,8 @@
    "head": "button head (ISO 7380), self-tapping into the printed pilot",
    "group": "floor_tub",
    "where": "cabin floor to battery side frame at x 2887, y 770 (from above)",
-   "clamp_mm": 1.9,
-   "engagement_mm": 6.1
+   "clamp_mm": 1.65,
+   "engagement_mm": 6.35
   },
   {
    "size": "M2",
@@ -3729,8 +3733,8 @@
    "head": "button head (ISO 7380), self-tapping into the printed pilot",
    "group": "floor_tub",
    "where": "cabin floor to battery side frame at x 2887, y -770 (from above)",
-   "clamp_mm": 1.9,
-   "engagement_mm": 6.1
+   "clamp_mm": 1.65,
+   "engagement_mm": 6.35
   },
   {
    "size": "M2",
@@ -3862,5 +3866,5 @@
   "cadquery": true,
   "solid2": true
  },
- "build_minutes": 9.9
+ "build_minutes": 10.3
 }
