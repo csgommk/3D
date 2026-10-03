@@ -384,7 +384,7 @@ def chassis_groups(B, R):
     #      (bumper beam, crush cans, rails and their towers), so nothing of the baseplate hangs over them
     rbrk = K.box(470, 500, -345, -315, K.SUB_Z[1] - 2, 760)             # refrigerant line rest
     G["front_sub"] = K.union([crash["crash"], crash["front_subframe"], susp["front_susp"], rbrk])
-    mounts = K.symy(K.box(3480, 3600, 300, 420, ZT, 320))               # subframe mount blocks (screw bosses)
+    mounts = K.symy(K.box(3480, 3600, 300, 480, ZT, 320))               # subframe mount blocks (screws outboard of the rails)
     rails = crash["rear_crash"] ^ boxm((K.PACK_X1 + C, -1500, 0), (X_RAMP - 2*C, 1500, 3000))   # tray .. bumper ramp
     feet = K.symy(K.box(K.PACK_X1 + C, 3490, 300, 380, ZT, 330))         # rails carried down to the undertray
     # the lower struts end at the bumper ramp: a cross-tie at their ends joins them, the cargo posts and
@@ -425,7 +425,7 @@ PAD_D, PAD_H, PILOT_DEPTH = 3.0, 1.5, 2.4          # model mm
 STD_M2 = [3, 4, 5, 6, 8, 10, 12]
 MOUNTS = [  # (group, x, y, kind, top of the module above the mount (full mm))
     ("front_sub", 1205.0, 365.0, "locator", 0.0), ("front_sub", 1205.0, -365.0, "locator", 0.0),
-    ("rear_sub", 3540.0, 360.0, "screw", 320.0), ("rear_sub", 3540.0, -360.0, "screw", 320.0),
+    ("rear_sub", 3540.0, 425.0, "screw", 320.0), ("rear_sub", 3540.0, -425.0, "screw", 320.0),
     ("tray", 1550.0, 0.0, "screw", 372.0), ("tray", 1550.0, 620.0, "screw", 335.0), ("tray", 3200.0, 0.0, "locator", 0.0),
     ("eaxle_front", 890.0, -90.0, "locator", 0.0), ("eaxle_front", 900.0, 157.0, "locator", 0.0),
     ("eaxle_rear", 3840.0, -90.0, "locator", 0.0), ("eaxle_rear", 3830.0, 160.0, "locator", 0.0),
@@ -522,14 +522,22 @@ def interior_groups(envelope):
             pegs.append(pin_solid((x, y, zf), (0, 0, 1), TOL["peg"], 1.5))
             sockets.setdefault(g, []).append(socket((x, y, zf), (0, 0, 1), TOL["peg"], 1.5))
             joint("peg", "interior_floor_tub", g, (x, y, zf + M(0.75)), (0, 0, 1), TOL["peg"], 1.5, back=0.75, fdepth=1.75)
-    G["floor_tub"] = K.diff(K.union([sec["floor"]] + pegs), holes[:6])
+    zb = K.Z_FLOOR + M(2.0)                               # top of the floor screw bosses (interior_parts)
+    tub_holes = list(holes[:2])
+    for x, y in K.TUB_SCREWS:
+        for s in (1, -1):
+            tub_holes += [K.cyl((x, s*y, K.Z_TUB - 1), (x, s*y, zb + 1), M(TOL["m2_clear"]/2), seg=24),
+                          K.cyl((x, s*y, zb - M(TOL["m2_head_h"]) - C), (x, s*y, zb + 1), M(TOL["m2_head"]/2), seg=32)]
+    G["floor_tub"] = K.diff(K.union([sec["floor"]] + pegs), tub_holes)
     G["seats"] = K.diff(sec["seats_front"] ^ above, sockets["seats"])
     G["bench"] = K.diff(sec["bench"] ^ above, sockets["bench"])
     a = np.array([math.cos(math.radians(K.SW_TILT)), 0, math.sin(math.radians(K.SW_TILT))])
     hub = np.array([K.SW_C[0], -K.SW_C[1], K.SW_C[2]]) - a*45
     sock = Manifold.hull_points(np.array(K.section_pts(hub + a*2, a, M(K.SW_PEG/2 + CLR), False, 24)
                                          + K.section_pts(hub - a*M(4.4), a, M(K.SW_PEG/2 + CLR), False, 24)))
-    G["dashboard"] = K.diff(sec["dash"] ^ above, holes[6:] + [sock] + sockets["dashboard"])
+    collar = Manifold.hull_points(np.array(K.section_pts(hub - a*0.5, a, M(K.SW_PEG/2 + CLR + 0.8), False, 32)
+                                           + K.section_pts(hub - a*M(4.8), a, M(K.SW_PEG/2 + CLR + 0.8), False, 32)))
+    G["dashboard"] = K.diff(K.union([sec["dash"] ^ above, collar]), holes[6:] + [sock] + sockets["dashboard"])
     joint("peg", "dashboard_steering_console", "dashboard_steering_console", tuple(hub - a*M(2.0)), tuple(-a), K.SW_PEG, 4.0,
           back=2.0, fdepth=4.3)
     JOINTS[-1].update(male="dashboard_steering_console", male_shell="steering_wheel")
@@ -675,7 +683,7 @@ def body_features(B, R, fe, re, z_hb, log=print):
             ye = float(v4.hood_halfwidth(x))
             E["main"].append(K.cbox(x - 60, x + 60, min(sg*(y - 60), sg*ye), max(sg*(y - 60), sg*ye), z_hb - M(4.5), z_hb - s))
             Cc["main"].append(K.teardrop_hole((x, sg*y, z_hb - s + 1), down, M(K.MAG_D), M(K.MAG_H) + 1))
-            Cc["hood"].append(K.teardrop_hole((x, sg*y, z_hb - 1), up, M(K.MAG_D), M(K.MAG_H) + 1))
+            Cc["hood"].append(K.cyl((x, sg*y, z_hb - 1), (x, sg*y, z_hb + M(K.MAG_H)), M(K.MAG_D)/2, seg=32))
             joint("magnet", None, "main_outer_body_shell", (x, sg*y, z_hb - s - M(1.0)), down, 3.0, 2.0, back=1.0, fdepth=2.25, blind=True)
             joint("magnet", None, "hood_solar_bonnet", (x, sg*y, z_hb + M(1.0)), up, 3.0, 2.0, back=1.0, fdepth=2.25, blind=True)
     MAGNETS.append(dict(where="hood to body shell ledge", count=4))
@@ -722,7 +730,8 @@ def body_features(B, R, fe, re, z_hb, log=print):
     yl = np.linspace(-600, 600, 31)
     # the tail bar sits on a sloping face: the lens is the skin layer itself (constant 1.6 mm, full height)
     lens_t = (B["body"] ^ window_slabs(xri, yl, zw[0], zw[1], 20.0, M(K.T_SHELL) + 60.0, -1)) - B["inset_shell"]
-    groove = window_slabs(xri, yl, zc - M(0.4), zc + M(0.4), -(M(K.T_SHELL) - M(0.5)), M(K.T_SHELL) + 20.0, -1)
+    inner = B["inset_shell"] ^ window_slabs(xri, yl, zc - M(0.4), zc + M(0.4), -(M(K.T_SHELL) - 30.0), M(K.T_SHELL) + 60.0, -1)
+    groove = inner.translate([M(0.5), 0, 0]) - B["inset_shell"]    # 0.5 mm off the inner skin, outward (+x at the tail)
     lenses.append(largest(lens_t - groove)[0])
     yo = np.r_[-600 - C, yl[1:-1], 600 + C]
     Cc["tail"].append(window_slabs(xri, yo, zw[0] - C, zw[1] + C, 20.0, M(K.T_SHELL) + rc + 20.0, -1))
@@ -770,7 +779,7 @@ def body_features(B, R, fe, re, z_hb, log=print):
         x = min(fz) - t_in - 45.0                      # pocket 10 mm inside the inner skin face
         xo = max(fz) + 10.0                            # boss reaches through the skin (clipped to the body)
         E["tail"].append(K.box(x - 60, xo, y - 60, y + 60, zl + s, zl + s + M(5)))
-        Cc["tail"].append(K.teardrop_hole((x, y, zl + s - 1), up, M(K.MAG_D), M(K.MAG_H) + 1))
+        Cc["tail"].append(K.cyl((x, y, zl + s - 1), (x, y, zl + s + M(K.MAG_H)), M(K.MAG_D)/2, seg=32))
         E["main"].append(K.box(x - 60, xo, y - 60, y + 60, zl - s - M(5), zl - s))
         Cc["main"].append(K.teardrop_hole((x, y, zl - s + 1), down, M(K.MAG_D), M(K.MAG_H) + 1))
         joint("magnet", None, "tailgate_rear_hatch", (x, y, zl + s + M(1.0)), up, 3.0, 2.0, back=1.0, fdepth=2.25, blind=True)
@@ -781,8 +790,8 @@ def body_features(B, R, fe, re, z_hb, log=print):
         zr = float(v4.ROOF(xh)) - 60
         zm = zr - 35
         E["tail"].append(K.box(xh + s, xh + s + M(4), yy - 60, yy + 60, zm - 70, zr + 20) ^ B["base"])
-        Cc["tail"].append(K.teardrop_hole((xh + s - 1, yy, zm), (1, 0, 0), M(K.MAG_D), M(K.MAG_H) + 1))
-        Cc["canopy"].append(K.teardrop_hole((xh - s + 1, yy, zm), (-1, 0, 0), M(K.MAG_D), M(K.MAG_H) + 1))
+        Cc["tail"].append(K.teardrop_hole((xh + s - 1, yy, zm), (1, 0, 0), M(K.MAG_D), M(K.MAG_H) + 4))     # mouth on a sloped face
+        Cc["canopy"].append(K.teardrop_hole((xh - s + 1, yy, zm), (-1, 0, 0), M(K.MAG_D), M(K.MAG_H) + 4))
         joint("magnet", None, "tailgate_rear_hatch", (xh + s + M(1.0), yy, zm), (1, 0, 0), 3.0, 2.0, back=1.0, fdepth=2.25, blind=True)
         joint("magnet", None, "removable_roof_solar_canopy", (xh - s - M(1.0), yy, zm), (-1, 0, 0), 3.0, 2.0, back=1.0, fdepth=2.25, blind=True)
     MAGNETS.append(dict(where="tailgate hinge edge to roof canopy", count=4))
@@ -830,7 +839,7 @@ def door_cards():
                 zp = 700.0
                 yin = float(K.skin_y(xp, [zp])[0]) - M(K.D_DOOR)
                 card = K.union([card, pin_solid((xp, s*(yin - gap), zp), (0, s, 0), TOL["pin"], 1.25, tear=False)])
-                slab_holes.append(K.teardrop_hole((xp, s*(yin - 10), zp), (0, s, 0), M(TOL["pin_socket"]), 10 + M(1.0 + CLR) + 1))
+                slab_holes.append(K.teardrop_hole((xp, s*(yin - 10), zp), (0, s, 0), M(TOL["pin_socket"]), 10 + M(1.0 + CLR) + 4))
                 joint("pin", "door_cards_set", "main_outer_body_shell", (xp, s*(yin + M(0.5)), zp), (0, s, 0), TOL["pin"], 1.0,
                       back=0.5, fdepth=1.25)
             cards.append(largest(card)[0])
@@ -966,7 +975,7 @@ def build(res=6.0, mirrors="mirror", log=print):
             tub_pilots.append(K.teardrop_hole((x, s*y, K.Z_PACK_TOP + 1), (0, 0, -1), M(TOL["m2_pilot"]), M(7.0)))
             joint("screw", None, "interior_floor_tub", (x, s*y, K.Z_TUB + M(0.5)), (0, 0, 1), 2.0, 1.0,
                   back=0.5, fdepth=(zb - K.Z_TUB)/SCALE - 0.1)
-            clamp = (zb - M(K.M2["head_h"]) - K.Z_TUB)/SCALE
+            clamp = (zb - M(K.M2["head_h"]) - C - K.Z_TUB)/SCALE
             SCREWS.append(dict(size="M2", length=8, head="button head (ISO 7380), self-tapping into the printed pilot",
                                group="floor_tub", where=f"cabin floor to battery side frame at x {x:.0f}, y {s*y:.0f} (from above)",
                                clamp_mm=round(clamp, 2), engagement_mm=round(8 - clamp, 2)))
@@ -1115,7 +1124,7 @@ def clean_for_stl(m, expected):
         rep["dropped_mm3"] = round(float(sum(abs(c.volume) for c in comps[expected:])), 3)
         tm = trimesh.util.concatenate(comps[:expected])
     v = np.asarray(tm.vertices).copy()
-    v[v[:, 2] < 1e-3, 2] = 0.0                     # the bed plane exactly at z = 0 (pinch nudges leave ~1e-4)
+    v[v[:, 2] < 2e-4, 2] = 0.0                     # the bed plane exactly at z = 0 (pinch nudges leave ~1e-4)
     return v, np.asarray(tm.faces, np.int64), rep
 
 
@@ -1436,6 +1445,7 @@ def validate(G, W, wl, out_files, log=print):
     meas.append(dict(kind="axle_in_hub", male=None, female="wheels_rims_x4", p=[0, 0, 1.0], axis=[0, 0, 1], male_d=3.0, depth=None,
                      measured_gap_mm=round(float(Point(0, 0).buffer(1.5, resolution=32).distance(bore)), 3)))
     res["joints"] = meas
+    res["lens_heights_mm"] = sorted(round(float(c.bounding_box()[5] - c.bounding_box()[2]), 3) for c in Gm["lenses"].decompose())
     gaps = [m["measured_gap_mm"] for m in meas if m["measured_gap_mm"] is not None]
     log(f"  joints measured: {len(gaps)} of {len(meas)}, gap {min(gaps):.3f}-{max(gaps):.3f} mm")
     bad = [m for m in meas if m.get("female_check") and not female_ok(m["female_check"])]
@@ -1520,14 +1530,14 @@ def assembly_steps(screws):
         ("Battery", "Lower `battery_tray_lower_housing` between the sills and fix it to the baseplate bosses with "
                     f"{fix('tray')} button-head screws from above. Drop the 8 module pairs of `battery_module_cells_combined` into the bays between the cross-members."),
         ("Cabin floor", f"Set the cabin floor of `interior_floor_tub` on the battery: the two pegs on the battery front wall locate it and the refrigerant risers pass into the HVAC opening. Fix it with {fix('floor_tub')} button-head screws into the battery side frames in the rear footwells."),
-        ("Cargo deck", "Glue four magnets into the bosses under the cargo deck (second piece of `interior_floor_tub`, printed upside down) and set it on its four posts over the rear e-axle."),
+        ("Cargo deck", "Glue four magnets into the bosses under the cargo deck (second piece of `interior_floor_tub`, printed upside down), with the pole that attracts the post magnets facing down, and set it on its four posts over the rear e-axle."),
         ("Seats and dashboard", "Push `front_bucket_seats_pair`, `rear_bench_seat` and `dashboard_steering_console` onto their floor pegs (a drop of glue if wanted). Plug the steering wheel's 2 mm peg into the column socket."),
         ("Wheels", "Slide each tyre of `tires_treaded_x4` onto a rim of `wheels_rims_x4` from the inner face until it seats on the outer lip (glue if printed in PLA). Push the wheels onto the axle ends and fix with a drop of CA."),
         ("Door cards", "Press the four cards of `door_cards_set` onto the inside of the body shell's door panels (two pins each, from inside the shell)."),
-        ("Body shell", "Thread the LED wires through the 3 mm channels and out of the 4 mm undertray exits. Lower `main_outer_body_shell` (the rear bumper beam, crush cans and upper struts are moulded inside its rear bumper) over the cabin onto the sill pins and screw it from below with "
+        ("Body shell", "Thread the headlight and dashboard LED wires out through the 4 mm undertray exits; the rear-lamp wires leave through the rear wheel houses. Lower `main_outer_body_shell` (the rear bumper beam, crush cans and upper struts are moulded inside its rear bumper) over the cabin onto the sill pins and screw it from below with "
                        f"{fix('main')} button-head screws (bumper corners and rocker ends)."),
         ("Lenses", "Fit the two clear lenses of `clear_lens_headlights_taillights` into the headlight window (body shell) and the tail-bar window (tailgate) with a drop of clear UV glue."),
-        ("Hood, roof, tailgate", "Glue the magnets into their pockets (each pair facing with opposite poles). Set `hood_solar_bonnet` on its ledge: 2 magnet pairs at the rear corners of the ledge and 2 on the radiator-shroud posts. then lower `removable_roof_solar_canopy` onto its four pins (A-pillar and C-pillar bases); its magnets meet the C-pillars. Finally slide `tailgate_rear_hatch` forward into the liftgate opening from behind until its hinge magnets meet the roof and its bottom magnets sit on the bumper ledge."),
+        ("Hood, roof, tailgate", "Glue the magnets into their pockets (each pair facing with opposite poles). Set `hood_solar_bonnet` on its ledge: 2 magnet pairs at the rear corners of the ledge and 2 on the radiator-shroud posts. Then lower `removable_roof_solar_canopy` onto its four pins (A-pillar and C-pillar bases); its magnets meet the C-pillars. Finally slide `tailgate_rear_hatch` forward into the liftgate opening from behind until its hinge magnets meet the roof and its bottom magnets sit on the bumper ledge."),
     ]
 
 
@@ -1555,12 +1565,13 @@ def fit_name(j):
     return (j["kind"], "-", "-")
 
 
-def write_guide(out, rows, val, screws, mags, args, info, plates_3mf, problems):
+def write_guide(out, rows, val, screws, mags, args, info, plates_3mf, problems, elapsed):
     L = []
     w = L.append
     w("# Solar SUV v4: 1:20 modular model kit, assembly and print guide\n")
     checked = not val.get("skipped")
-    w(f"This kit was generated by `generate_model_kit.py --res {info.get('res', args.res):g}` ({info['time']/60:.0f} min build). "
+    w(f"This kit was generated by `generate_model_kit.py --res {info.get('res', args.res):g}` (geometry {info['time']/60:.0f} min, "
+      f"{elapsed/60:.0f} min with export and checks). "
       f"It has 20 STL files in 5 folders" + ("" if args.no_3mf else ", plus one 3MF per folder") + ". "
       + ("Every file was reloaded from disk and checked (section 8). " if checked else
          "**The support, joint, interference and assembly checks were skipped (`--skip-checks`).** ")
@@ -1793,6 +1804,9 @@ def check_summary(rows, val, plates_3mf, args):
         return out
     for k, v in val["interference_mm3"].items():
         out.append(f"interference {k}: {v} mm3")
+    for h in val.get("lens_heights_mm", []):
+        if h < 2.1:
+            out.append(f"a lens strip is only {h} mm tall (window minus 2 x 0.25 mm expected: 2.2 / 2.6 mm)")
     for k, v in val["assembly_paths"].items():
         if v["blocked_mm2"] > 0:
             out.append(f"assembly path of {k} blocked: {v['blocked_mm2']} mm2 at {v['at']}")
@@ -1871,7 +1885,7 @@ def main(argv=None):
     log(f"  validation done ({(time.time() - t0)/60:.1f} min)")
     screws, mags = bom()
     problems = check_summary(rows, val, plates_3mf, args)
-    write_guide(args.out, rows, val, screws, mags, args, info, plates_3mf, problems)
+    write_guide(args.out, rows, val, screws, mags, args, info, plates_3mf, problems, time.time() - t0)
     manifest = dict(generator="generate_model_kit.py", script_sha1=script_hash(), res=info.get("res", args.res),
                     mirrors=info.get("mirrors", args.mirrors), units="model mm (1:20)", clearance_per_side_mm=CLR, problems=problems,
                     tolerances=TOL, parts=rows, plates_3mf=plates_3mf, clearance_pass=info["carved"], validation=val,

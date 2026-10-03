@@ -1359,6 +1359,8 @@ def canopy_kit(B, R, interior, log=print, shadow=False):
         K = shadow_down(K)
     C = printable_cavity(K, g)
     cav = voxels_to_manifold(C, g, smooth=0.6)
+    if shadow:                                              # cavities reach the underside: cut through it, not flush with it
+        cav = union([cav, cav.translate([0, 0, -2.0])])
     thin = (cav - B["inset_shell"]).volume()/8e6
     cav = cav.intersect(B["inset_shell"])                  # never thinner than the 1.6 mm skin
     can = solid - cav

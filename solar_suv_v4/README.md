@@ -26,7 +26,7 @@ The kit is fixed with M2/M3 screws and 44 3x2 mm magnets, and has 4 mm LED chann
 
 ## New: 20-file model-kit pipeline
 
-`python3 generate_model_kit.py` builds the cutaway kit as 20 separately printable parts and writes them to `solar_suv_1to20_model_kit/` (about 10 minutes; `--res 12` gives a quick draft). The parts are grouped in five folders, `stls/01_chassis/` to `stls/05_wheels_and_hardware/`. Each part is a binary STL, and each folder also has one 3MF plate.
+`python3 generate_model_kit.py` builds the cutaway kit as 20 separately printable parts and writes them to `solar_suv_1to20_model_kit/` (about 10 minutes; `--res 12` gives a quick draft). The parts are grouped in five folders, `stls/01_chassis/` to `stls/05_wheels_and_hardware/`. Each part is a binary STL, and each folder also has a 3MF project with all of its parts.
 
 - **Units and orientation:** model millimetres (1:20), every part lying flat at z = 0.
 - **Clearances:** every male/female joint has 0.25 mm clearance per side. These joints are pins, pegs, boss pads, magnet pockets, screw holes, axle bores, tyre on rim and lenses in their windows.
@@ -36,7 +36,7 @@ The kit is fixed with M2/M3 screws and 44 3x2 mm magnets, and has 4 mm LED chann
   - layer-by-layer supports;
   - measured joint clearances, interference between parts and assembly paths.
 
-It also writes [`ASSEMBLY_AND_PRINT_GUIDE.md`](solar_suv_1to20_model_kit/ASSEMBLY_AND_PRINT_GUIDE.md), with print settings, hardware and the assembly sequence, and `kit_manifest.json`. The STL and 3MF files are not stored in the repository (about 150 MB). Regenerate them with the command above.
+It also writes [`ASSEMBLY_AND_PRINT_GUIDE.md`](solar_suv_1to20_model_kit/ASSEMBLY_AND_PRINT_GUIDE.md), with print settings, hardware and the assembly sequence, and `kit_manifest.json`. The STL and 3MF files are committed too (about 150 MB). Running the command above regenerates them.
 
 ## Package contents
 
