@@ -278,12 +278,23 @@ def bellows(p0, p1, r0, r1, folds=5, depth=8.0):
 # =====================================================================
 #  CHASSIS (full-size mm).  chassis_parts() -> {tag: [manifold, ...]}
 # =====================================================================
+# Optional subsystem bookkeeping (used by generate_model_kit.py to split the kit differently):
+# when SECTIONS is a dict, every _add() is also filed under SECTIONS[<current section>][tag].
+SECTIONS = None
+_SECTION = [None]
+
+def section(name):
+    _SECTION[0] = name
+
 def _add(P, tag, *ms):
     for m in ms:
         if m is not None and not m.is_empty():
             P.setdefault(tag, []).append(m)
+            if SECTIONS is not None:
+                SECTIONS.setdefault(_SECTION[0], {}).setdefault(tag, []).append(m)
 
 def pack_parts(P):
+    section("tray")
     zt = Z_PACK_TOP
     yi = PACK_HW - FRAME_W
     # tray: side frames (extrusions with a grooved outer face), end walls, cold plate
@@ -300,6 +311,7 @@ def pack_parts(P):
     _add(P, "alu", box(BJB[1], ROWS[-1] + MOD_W, -60, 60, Z_COLD[1], 330))
     _add(P, "hv", symy(box(BJB[1] - 10, ROWS[-1] + MOD_W, 14, 40, 330, 338)))
     # modules
+    section("modules")
     yc = [MOD_Y0 + 12 + CELL["t"]*(k + 0.5) for k in range(MOD_CELLS)]
     for r, x0 in enumerate(ROWS):
         x1 = x0 + MOD_W
@@ -330,10 +342,12 @@ def pack_parts(P):
             _add(P, "electronics", f(cmu))
             _add(P, "hv", f(link))
     # BMS daisy chain over the CMU boards, into the BMU
+    section("bms_chain")
     for s in (1, -1):
         ym = s*(MOD_Y0 + MOD_LEN/2)
         _add(P, "lv", tube([(BMU[0] + 60, s*480, 330), (BMU[1] + 30, s*480, Z_CELL[1] + 11), (ROWS[-1] + MOD_W - 40, s*480, Z_CELL[1] + 11)], 7, n=12))
     # battery junction box (contactors, pyro fuse, current sensor) and BMS master unit
+    section("tray")
     bjb = cbox(BJB[0], BJB[1], BJB[2], BJB[3], Z_COLD[1], 372, ct=10)
     ribs = union([box(BJB[0] + 20, BJB[1] - 20, y - 6, y + 6, 372, 378) for y in (-180, -60, 60, 180)])
     _add(P, "inverter", bjb, ribs)
@@ -359,6 +373,7 @@ COOL_R = (-150.0, 150.0)             # rear drive-unit loop through the centre d
 
 def crash_parts(P):
     """Bumper beams, crush cans, rails (front kick-down onto the pack, rear kick-up), subframes."""
+    section("crash")
     # ---- front
     ys = np.linspace(-780, 780, 41)
     xb = lambda y: 150.0 + 0.9*v4.bow_front(y)
@@ -378,17 +393,21 @@ def crash_parts(P):
     for x0, x1 in ((470.0, 530.0), (700.0, 760.0), (830.0, 950.0), (1060.0, 1120.0), (1210.0, 1270.0)):
         _add(P, "chassis", symy(box(x0, x1, 340, RAIL_Y[1], 234, FRAIL_Z[0] + 2)))   # body-mount towers (<= 9 mm spans); 830-950 carries the axle bore
     # front subframe (cradle) on the undertray, rack crossmember with harness notches
+    section("front_subframe")
     sub = union([symy(box(450, 1250, 300, 380, SUB_Z[0], SUB_Z[1])), box(450, 520, -380, 380, SUB_Z[0], SUB_Z[1]),
                  box(1040, 1250, -420, 420, SUB_Z[0], SUB_Z[1])])
     notch = [box(1030, 1262, y - 20, y + 20, 230, 268) for y in HV_PORTS_F + HV_PORTS_C[:2] + COOL_F + REFRIG_Y + (SOLAR_Y,)]
     _add(P, "chassis", diff(sub, notch))
     # ---- rear
+    section("rear_crash")
     _add(P, "chassis", symy(union([box(PACK_X1 - 4, 4382, 300, 380, 320, Z_PACK_TOP),
                                    extrude_xz([(4380, 320), (4380, Z_PACK_TOP), (4582, 682), (4582, 560)], 300, 380)])))
+    section("rear_subframe")
     rs = union([symy(box(3480, 4390, 300, 380, SUB_Z[0], SUB_Z[1])), box(3480, 3560, -380, 380, SUB_Z[0], SUB_Z[1]),
                 box(4220, 4300, -380, 380, SUB_Z[0], SUB_Z[1])])
     notch = [box(3470, 3570, y - 20, y + 20, 230, 268) for y in HV_PORTS_R + COOL_R]
     _add(P, "chassis", diff(rs, notch))
+    section("rear_crash")
     _add(P, "alu", symy(cbox(4580, 4662, 300, 380, 560, 682, cs=14)))
     xr = lambda y: 4662.0 - (v4.bow_rear(y) - v4.bow_rear(0))
     yr = np.linspace(-700, 700, 37)
@@ -400,6 +419,7 @@ def crash_parts(P):
             st = union([st, box(4450, 4510, y - 30, y + 30, 234, 345)])
         _add(P, "chassis", symy(st) if y else st)
     # cargo-deck posts
+    section("cargo_posts")
     for x, y in CARGO_POSTS:
         _add(P, "chassis", symy(cbox(x - 30, x + 30, y - 30, y + 30, 234, Z_CARGO[0], cs=8)))
 
@@ -486,6 +506,7 @@ def knuckle(P, xa, front=True):
 
 def suspension_parts(P):
     # ---------------- FRONT: MacPherson strut, A-arm, rack-and-pinion EPS, sway bar
+    section("front_susp")
     xarm = knuckle(P, X_FA, True)
     xbj = X_FA - 20
     piv = [(800.0, 390.0), (1150.0, 390.0)]
@@ -511,6 +532,7 @@ def suspension_parts(P):
     # sway bar on the rack crossmember, ends on the lower arms
     _add(P, "susp", tube([(1048, -495, 300), (1205, -380, 334), (1205, 380, 334), (1048, 495, 300)], 13, n=14))
     # ---------------- REAR: 5-link (wishbone + camber + toe), coilover, sway bar
+    section("rear_susp")
     xarm = knuckle(P, X_RA, False)
     xbj = X_RA - 20
     plate = unary_union([Point(3620, 390).buffer(35), Point(4000, 390).buffer(35), Point(xbj, BJ_Y).buffer(32),
@@ -533,6 +555,7 @@ def thermal_parts(P):
     """Front-end cooling module, heat-pump thermal module (left carrier) and the
     charging stack (right carrier) above the front inverter."""
     # radiator + condenser down to the undertray (lower tank = air dam), fan shroud with 2 fans
+    section("frontend")
     _add(P, "radiator", box(300, 340, -400, 400, 234, 760), box(278, 300, -380, 380, 234, 740))
     shroud = box(340, 398, -420, 420, 234, 760)
     for y in (-205.0, 205.0):
@@ -548,9 +571,13 @@ def thermal_parts(P):
     _add(P, "radiator", shroud)
     # carriers on the inverter, outer edges on posts standing on the rails
     for s in (1, -1):
-        _add(P, "chassis", box(575, 800, min(s*20, s*440), max(s*20, s*440), 685, 700),
-             box(640, 760, min(s*436, s*480), max(s*436, s*480), FRAIL_Z[1] - 2, 700),
-             box(640, 760, min(s*300, s*380), max(s*300, s*380), SUB_Z[1] - 2, 690))       # posts on the subframe
+        section("carrier_plates")
+        _add(P, "chassis", box(575, 800, min(s*20, s*440), max(s*20, s*440), 685, 700))
+        section("carrier_rail_posts")
+        _add(P, "chassis", box(640, 760, min(s*436, s*480), max(s*436, s*480), FRAIL_Z[1] - 2, 700))
+        section("carrier_sub_posts")
+        _add(P, "chassis", box(640, 760, min(s*300, s*380), max(s*300, s*380), SUB_Z[1] - 2, 690))   # posts on the subframe
+    section("heatpump")
     # LEFT: heat-pump thermal module
     _add(P, "motor", tube([(640, -430, 795), (640, -290, 795)], 62, n=28), cbox(600, 690, -290, -250, 700, 850, ct=8))  # e-compressor
     _add(P, "electronics", cbox(610, 680, -400, -320, 852, 870, ct=6))                       # compressor inverter lid
@@ -564,6 +591,7 @@ def thermal_parts(P):
         _add(P, "motor", cyl((752, y, 789), (752, y, 860), 24, seg=24))
     _add(P, "alu", cbox(712, 800, -85, -25, 700, 790, ct=6))
     # RIGHT: charging stack - power conversion unit (11 kW OBC + DC-DC + PDU), MPPT, 12 V LFP
+    section("stack")
     pcu = cbox(650, 800, 40, 420, 700, 800, ct=10)
     _add(P, "inverter", pcu, union([box(660, 790, y, y + 8, 800, 806) for y in np.arange(60, 410, 40)]))
     mppt = cbox(662, 788, 80, 380, 806, 850, ct=6)
@@ -746,6 +774,7 @@ def interior_parts(envelope=None, wheel=None):
     steering wheel, unioned only for clearance studies (it prints separately)."""
     P = {}
     zf = Z_FLOOR
+    section("floor")
     # ---- floor plate on the pack, sill trims, floor mats
     fl = Polygon([(FLOOR_X0, -560), (FLOOR_X0 + 120, -850), (3255, -850), (3255, -660), (FLOOR_X1, -660),
                   (FLOOR_X1, 660), (3255, 660), (3255, 850), (FLOOR_X0 + 120, 850), (FLOOR_X0, 560)])
@@ -761,8 +790,10 @@ def interior_parts(envelope=None, wheel=None):
     for x, y, lx, ly in ((1690, -390, 400, 400), (1690, 390, 400, 400), (2790, -370, 220, 380), (2790, 370, 220, 380)):
         _add(P, "seat", box(x - lx/2, x + lx/2, y - ly/2, y + ly/2, zf - 4, zf + 8))
     # ---- seats: 2 front buckets, rear 60/40 bench (outboard places + centre)
+    section("seats_front")
     for yc in (-HP_F[1], HP_F[1]):
         seat(P, yc, True)
+    section("bench")
     for yc in (-HP_R[1], HP_R[1]):
         seat(P, yc, False)
     tr = math.tan(math.radians(BACK_R))
@@ -774,6 +805,7 @@ def interior_parts(envelope=None, wheel=None):
         _add(P, "alu", cyl((3425 + 500*tr + 50, yy, 1130), (3425 + 545*tr + 60, yy, 1250), 10, seg=16))
     _add(P, "lv", cbox(3375, 3415, -12, 12, zf - 4, 730, ct=8))
     # ---- B-pillar lower trims with belt retractor, webbing and D-ring
+    section("floor")
     zs = np.linspace(zf, Z_CAN - 12, 12)
     ysk = skin_y(2520.0, zs)
     for s in (1, -1):
@@ -785,6 +817,7 @@ def interior_parts(envelope=None, wheel=None):
              box(2510, 2535, min(yr, yr - s*14), max(yr, yr - s*14), 590, Z_CAN - 60),
              cbox(2495, 2550, min(yr, yr - s*28), max(yr, yr - s*28), Z_CAN - 95, Z_CAN - 50, ct=6))
     # ---- instrument panel: tent-roofed footwells, centre stack = HVAC case
+    section("dash")
     ip = slab_xz([(FLOOR_X0, zf - 4), (FLOOR_X0, 1010), (1385, 1082), (1600, 1094), (1700, 1080), (1762, 1040), (1768, 900),
                   (1720, 845), (1720, zf - 4)], -820, 820)
     caves = []
@@ -813,12 +846,14 @@ def interior_parts(envelope=None, wheel=None):
         _add(P, "refrigerant", cbox(HVAC_X - 18, HVAC_X + 5, y - 18, y + 18, zf - 4, 530, ct=4))
     _add(P, "motor", cyl((1450, 310, zf - 4), (1450, 310, 640), 125, seg=48), cbox(1340, 1540, 200, 440, 640, 730, ct=12),
          box(1400, 1500, 140, 200, zf - 4, 600))                             # blower scroll, fresh-air box, duct
+    section("floor")
     for s in (1, -1):                                                        # foot-well ducts on the floor
         _add(P, "inverter", box(1460, 1560, min(s*150, s*240), max(s*150, s*240), zf - 4, 470))
     # pedals (floor-hinged organ type) and dead pedal
     for y0, y1, xb, xt, zt in ((-330, -270, 1460, 1405, 585), (-480, -380, 1475, 1415, 610), (-760, -660, 1440, 1385, 560)):
         _add(P, "alu" if y0 > -700 else "trim", slab_xz([(xb, zf - 4), (xb + 34, zf - 4), (xt + 26, zt), (xt, zt)], y0, y1))
     # steering column shroud (48+ deg underside), socket for the steering wheel peg, stalks
+    section("dash")
     a = np.array([math.cos(math.radians(SW_TILT)), 0, math.sin(math.radians(SW_TILT))])
     c = np.array([SW_C[0], -SW_C[1], SW_C[2]])
     hub = c - a*45
@@ -1161,10 +1196,16 @@ def decimate(m, reduce=0.8):
     m2 = v4._to_manifold(v2, f2)
     return m2 if m2.status().name == "NoError" and abs(m2.volume() - m.volume()) < 0.01*abs(m.volume()) else m
 
-def support_filled(part, bounds, inner, region, keep_out=None, log=print, name=""):
+def shadow_down(V):
+    """Voxels at or below any set voxel of the same column (what a part lowered from above
+    must not have underneath an installed part)."""
+    return np.flip(np.logical_or.accumulate(np.flip(V, axis=2), axis=2), axis=2)
+
+def support_filled(part, bounds, inner, region, keep_out=None, log=print, name="", shadow=False):
     """Voxelize a hollow part, compute the printable support fill, merge it back.  The fill is
     clipped to `inner` (the skin offset 1.2 mm inward, deeper than any engraving) so it can
-    only grow inside the shell and never refills the exterior detail."""
+    only grow inside the shell and never refills the exterior detail.  shadow: the keep-out
+    also covers everything below the keep-out parts, so the filled part can be lowered over them."""
     g = Grid(bounds[0], bounds[1], *VOX)
     t = time.time()
     occ = voxelize(part, g)
@@ -1172,6 +1213,8 @@ def support_filled(part, bounds, inner, region, keep_out=None, log=print, name="
     if keep_out is not None:                          # 0.5 mm clearance around chassis / interior parts
         ko = ndimage.binary_dilation(voxelize(keep_out, g), structure=np.ones((3, 3, 1), bool), iterations=int(round(M(0.8)/g.hxy)))
         ko = ndimage.binary_dilation(ko, structure=np.ones((1, 1, 3), bool), iterations=1)
+        if shadow:
+            ko = shadow_down(ko)
     F = support_fill(occ, g, keep_out=ko)
     fill = decimate(voxels_to_manifold(F, g, smooth=0.7, dilate=1), 0.85)
     fill = fill.intersect(inner).intersect(region)
@@ -1299,7 +1342,7 @@ def door_kit(B, R, which, extra, cuts):
     d = union([d] + [m.intersect(B["base"]).intersect(reg) for m in extra])
     return largest(diff(d, cuts))[0]
 
-def canopy_kit(B, R, interior, log=print):
+def canopy_kit(B, R, interior, log=print, shadow=False):
     """Greenhouse/roof: solid (glass is painted, as on v4) with tent-roofed cavities over every
     interior part that rises above the beltline, so it prints upright on its flat underside.
     interior: everything that must fit under the canopy (cabin part + steering wheel)."""
@@ -1312,6 +1355,8 @@ def canopy_kit(B, R, interior, log=print):
     clr = M(1.0)                                            # 1 mm clearance around the interior
     K = ndimage.binary_dilation(K, structure=np.ones((3, 3, 1), bool), iterations=int(round(clr/g.hxy)))
     K = ndimage.binary_dilation(K, structure=np.ones((1, 1, 3), bool), iterations=max(1, int(round(clr/g.hz))))
+    if shadow:                                              # canopy lowered over the cabin: nothing under the interior
+        K = shadow_down(K)
     C = printable_cavity(K, g)
     cav = voxels_to_manifold(C, g, smooth=0.6)
     thin = (cav - B["inset_shell"]).volume()/8e6

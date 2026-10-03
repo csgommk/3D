@@ -903,14 +903,23 @@ def sdf_solid(f, lo, hi, h):
     vol[0], vol[-1], vol[:, 0], vol[:, -1], vol[:, :, 0], vol[:, :, -1] = (1.0,)*6
     return mesh_level(vol, (xs[0], ys[0], zs[0]), h, 0.0, 0.6)
 
-def build_wheel(caliper_angle=126.0):
-    """Returns (wheel manifold in model mm, {original_id: tag})."""
+def build_wheel(caliper_angle=126.0, split_clearance=None):
+    """Returns (wheel manifold in model mm, {original_id: tag}).
+    split_clearance (model mm per side): build the rim (with rotor, caliper and nuts) and the
+    tyre as two separate parts instead -> ((rim, tyre), tags).  The tyre's inner contour is the
+    rim profile grown by the clearance (it slides on from the inner face and seats against the
+    outer lip), and the hub bore becomes a clearance bore for the 3 mm axle."""
     tags = {}
     W, rr = WW, WRR
     def tag(m, t):
         m = m.as_original(); tags[m.original_id()] = t; return m
     # ---- tyre
-    tyre = tag(revolve_rz(tyre_profile()), "tyre")
+    if split_clearance is None:
+        tyre = tag(revolve_rz(tyre_profile()), "tyre")
+    else:
+        prof = Polygon(tyre_profile()).buffer(0).difference(Polygon(rim_profile()).buffer(0).buffer(split_clearance, join_style=1))
+        prof = max(getattr(prof, "geoms", [prof]), key=lambda g: g.area)
+        tyre = tag(revolve_rz(list(prof.exterior.coords)[:-1]), "tyre")
     cut = []
     groove_l = [2.55, 5.35, 7.55, 10.35]
     for zl in groove_l:
@@ -965,9 +974,12 @@ def build_wheel(caliper_angle=126.0):
         zf = float(FACE(4.1))
         nuts.append(Manifold.cylinder(0.62, 0.50, 0.40, 6).translate([4.1*math.cos(a), 4.1*math.sin(a), zf - 0.3]))
     nuts = tag(Manifold.batch_boolean(nuts, OpType.Add), "rim")
-    rb = (AXLE_D - HUB_PRESS)/2
+    rb = (AXLE_D - HUB_PRESS)/2 if split_clearance is None else AXLE_D/2 + split_clearance
     bore = Manifold.batch_boolean([Manifold.cylinder(HUB_DEPTH + 1, rb, rb, 32).translate([0, 0, -1]),
                                    Manifold.cylinder(rb, rb, 0.0, 32).translate([0, 0, HUB_DEPTH])], OpType.Add)
+    if split_clearance is not None:
+        rim_part = Manifold.batch_boolean([rim, disc, cal, nuts], OpType.Add) - bore
+        return (rim_part, tyre), tags
     wheel = Manifold.batch_boolean([tyre, rim, disc, cal, nuts], OpType.Add) - bore
     return wheel, tags
 

@@ -24,6 +24,20 @@ The kit is fixed with M2/M3 screws and 44 3x2 mm magnets, and has 4 mm LED chann
 
 ![Kit cutaway](figs/kit_cutaway.png)
 
+## New: 20-file model-kit pipeline
+
+`python3 generate_model_kit.py` builds the cutaway kit as 20 separately printable parts and writes them to `solar_suv_1to20_model_kit/` (about 10 minutes; `--res 12` gives a quick draft). The parts are grouped in five folders, `stls/01_chassis/` to `stls/05_wheels_and_hardware/`. Each part is a binary STL, and each folder also has one 3MF plate.
+
+- **Units and orientation:** model millimetres (1:20), every part lying flat at z = 0.
+- **Clearances:** every male/female joint has 0.25 mm clearance per side. These joints are pins, pegs, boss pads, magnet pockets, screw holes, axle bores, tyre on rim and lenses in their windows.
+- **Checks:** the script reloads every file and checks it:
+  - watertight and 2-manifold, with the expected pieces;
+  - scale and bed contact;
+  - layer-by-layer supports;
+  - measured joint clearances, interference between parts and assembly paths.
+
+It also writes [`ASSEMBLY_AND_PRINT_GUIDE.md`](solar_suv_1to20_model_kit/ASSEMBLY_AND_PRINT_GUIDE.md), with print settings, hardware and the assembly sequence, and `kit_manifest.json`. The STL and 3MF files are not stored in the repository (about 150 MB). Regenerate them with the command above.
+
 ## Package contents
 
 Delivered as four archives that unpack into the same `solar_suv_v4/` folder:
@@ -43,6 +57,8 @@ Delivered as four archives that unpack into the same `solar_suv_v4/` folder:
 | `stl/pins_x3.stl`, `stl/axles_x2_88.25mm.stl` | 3 mm alignment pins and axles. A 3 mm steel or carbon rod cut to 88.25 mm also works |
 | `tools/check_stl.py` | Standalone print-readiness check: watertight, edge manifoldness, shells, bed contact, overhang area |
 | `solar_suv_v4_kit.py` | Internal architecture and kit generator (called by `--part kit`) |
+| `generate_model_kit.py` | 20-file model-kit pipeline: part split, 0.25 mm clearances, STL + 3MF export, validation, assembly and print guide |
+| `solar_suv_1to20_model_kit/` | Pipeline output: `stls/01_chassis` ... `stls/05_wheels_and_hardware`, `ASSEMBLY_AND_PRINT_GUIDE.md`, `kit_manifest.json` |
 | `stl/kit/kit_01`...`kit_12_*.stl` | The 12 kit parts, with `kit_checks.json`, `packaging.json` and a colour `kit_assembly_preview.glb` |
 | `tools/print_check.py` | Layer-by-layer FDM support check: bridges, cantilevers, islands |
 | `tools/render_webgl.py`, `tools/render_kit_figs.py`, `tools/flow_diagram.py` | Offline renderer, kit figures, power and thermal diagram |
@@ -210,6 +226,8 @@ python3 solar_suv_v4_1to20.py --res 12 --part body      # 10-second draft
 python3 solar_suv_v4_1to20.py --mirrors camera          # slim camera pods instead of mirrors
 python3 solar_suv_v4_1to20.py --out stl --part kit      # modular cutaway kit -> stl/kit/ (about 6 minutes)
 python3 tools/check_stl.py stl/*.stl stl/kit/*.stl      # check every export
+python3 generate_model_kit.py                           # 20-file model kit -> solar_suv_1to20_model_kit/ (about 10 minutes)
+python3 tools/check_stl.py solar_suv_1to20_model_kit/stls/*/*.stl
 python3 tools/render_kit_figs.py stl/kit/kit_assembly_preview.glb figs   # kit figures (needs playwright)
 ```
 
