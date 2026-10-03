@@ -18,12 +18,14 @@ generators (solar_suv_v4_1to20.py exterior, solar_suv_v4_kit.py internals):
     stls/05_wheels_and_hardware/ wheels_rims_x4, tires_treaded_x4, clear_lens_headlights_taillights
 
 Every male/female joint (pins, pegs, magnet pockets, screw bosses, plug sockets, lens windows,
-tyre on rim, axle bores) has 0.25 mm clearance per side.  Parts that touch are separated by a
-0.25 mm Minkowski offset of the part that is installed first.  Each file is exported as STL in
-model millimetres (1 unit = 1 mm at 1:20) with its bed face at z = 0, plus one 3MF plate per
-folder, then validated (watertight, 2-manifold edges, shells, scale, bed contact, measured
-joint clearances, interference, lowering paths, layer-by-layer support check).  The script
-writes ASSEMBLY_AND_PRINT_GUIDE.md and kit_manifest.json next to the stls/ folder.
+tyre on rim, axle bores) has 0.25 mm clearance per side.  Where two parts touch, a 0.25 mm
+Minkowski offset of one part is cut from the other (open-top slots in the part installed first,
+bottom-open notches in the part that goes on later).  Each file is exported as a binary STL in
+model millimetres (1 unit = 1 mm at 1:20) with its bed face at z = 0, plus one 3MF project per
+folder.  Everything is then validated: watertight, 2-manifold edges, pieces, scale, bed contact,
+layer-by-layer supports, measured joint clearances and female features, interference and
+assembly paths.  The script writes ASSEMBLY_AND_PRINT_GUIDE.md and kit_manifest.json next to the
+stls/ folder and exits with status 1 if any check fails.
 """
 import argparse, importlib, json, math, os, subprocess, sys, time, zipfile
 
@@ -71,7 +73,7 @@ CLR = 0.25
 TOL = dict(clearance_per_side=CLR, magnet=(3.0, 2.0), magnet_pocket=(3.0 + 2*CLR, 2.0 + CLR),
            pin=1.5, pin_socket=1.5 + 2*CLR, peg=2.0, peg_socket=2.0 + 2*CLR, axle=3.0, axle_bore=3.0 + 2*CLR,
            m2_pilot=1.6, m2_clear=2.0 + 2*CLR, m2_head=3.5 + 2*CLR, m3_pilot=2.5, m3_clear=3.0 + 2*CLR,
-           m3_head=5.7 + 2*CLR, panel_gap=2*CLR)
+           m3_head=5.7 + 2*CLR, m2_head_h=1.3, panel_gap=2*CLR)
 
 
 def apply_tolerances():
@@ -80,17 +82,23 @@ def apply_tolerances():
     K.SPLIT = CLR                                 # half-gap at every split face (hood, roof, tailgate, shell)
     K.S_GAP = M(K.SPLIT)
     K.MAG_D, K.MAG_H = TOL["magnet_pocket"]
-    K.M2.update(clear=TOL["m2_clear"], head=TOL["m2_head"], head_h=1.3)
+    K.M2.update(clear=TOL["m2_clear"], head=TOL["m2_head"], head_h=TOL["m2_head_h"])
     K.M3.update(clear=TOL["m3_clear"], head=TOL["m3_head"], head_h=1.8)
     v4.AXLE_CLEAR = CLR
     # routing changes for a split chassis (see the engineering notes in the guide)
     K.COOL_F = (-280.0, -220.0)                   # pack coolant ports clear the front subframe side member
     K.CARGO_POSTS = ((4100.0, 600.0), (4500.0, 560.0))   # first post clear of the rear lower-arm plate
-    K.LED_PASS = [(1300.0, 420.0), (1300.0, -420.0), (3420.0, 260.0)]   # rear exit clear of the harness strap
+    K.LED_PASS = [(1300.0, 420.0), (1300.0, -420.0)]   # front-bay wire exits (rear lamps: through the rear wheel houses)
     K.CLIP_M2 = [(360.0, 770.0), (4480.0, 760.0)]  # rear body screws outboard of the rear struts
+    K.CLIP_M3 = [(1450.0, 880.0), (3330.0, 880.0)]  # rocker-end body screws (M2): counterbore inside the rocker, clear of
+                                                    # the harness connector pockets (x <= 1395 at |y| 880) and the door cards
+    K.HOOD_MAG = [(1150.0, 640.0)]                 # rear hood magnets on the body-shell ledge (front pair: HOOD_POST)
 
 
 C = M(CLR)                                        # 5 mm full size = 0.25 mm on the model
+HOOD_POST = (395.0, 170.0)                        # front hood magnets: on posts of the radiator support
+POST_TOP = 690.0                                  # cargo posts: top (the deck rests on them through its bosses)
+POST_R = 55.0                                     # cargo post cap / deck boss radius (5.5 mm on the model)
 ZT = 234.0                                        # undertray top: every chassis module stands here
 BALL = None
 
@@ -122,6 +130,7 @@ def carve(B, A, mode="ball", r=None, min_vol=1.0):
                 slots and recesses; nothing is dug under A's feet);
       'drape' - B is lowered over A after it: 0.25 mm sideways and everything of B below A goes
                 (notches open at the bottom; B may rest on top of A);
+      'drape_c' - as 'drape', with 0.25 mm above A as well;
       'ball'  - 0.25 mm all round.
     Returns (carved B, overlap volume removed in full-size mm3)."""
     r = r or C
@@ -134,8 +143,10 @@ def carve(B, A, mode="ball", r=None, min_vol=1.0):
         return B, 0.0
     if mode == "slot":
         tool = Manifold.cylinder(2000.0, r, r, 16)
-    elif mode == "drape":
+    elif mode == "drape":                          # B may rest on top of A
         tool = Manifold.cylinder(2000.5, r, r, 16).translate([0, 0, -2000.0])
+    elif mode == "drape_c":                        # B is lowered over A and keeps 0.25 mm above it too
+        tool = Manifold.cylinder(2000.0 + r, r, r, 16).translate([0, 0, -2000.0])
     else:
         tool = ball()
     D = Aloc.minkowski_sum(tool)
@@ -167,14 +178,18 @@ def keep_big(m, frac=0.002, min_vol=8000.0):
 # ---------------------------------------------------------------------------
 # 2. registries: joints (measured after export), fasteners and magnets (bill of materials)
 # ---------------------------------------------------------------------------
-JOINTS = []        # dict(kind, male, female, p (full mm, installed), axis, male_d (model mm), depth (model mm))
+JOINTS = []        # dict(kind, male, female, p (full mm, installed), axis, male_d, depth, back, fdepth, blind (model mm))
 SCREWS = []        # dict(size, length, where, parts)
 MAGNETS = []       # dict(where, parts, count)
 
 
-def joint(kind, male, female, p, axis, male_d, depth):
+def joint(kind, male, female, p, axis, male_d, depth, back=None, fdepth=None, blind=False):
+    """Register a male/female joint.  p: a point on the joint axis inside the female feature, axis
+    pointing into it; back: distance (model mm) from p back to the female's mouth; fdepth: depth of the
+    female feature from its mouth (model mm); blind: the female must have a floor (magnet pockets)."""
     JOINTS.append(dict(kind=kind, male=male, female=female, p=[float(v) for v in p],
-                       axis=[float(v) for v in axis], male_d=male_d, depth=depth))
+                       axis=[float(v) for v in axis], male_d=male_d, depth=depth,
+                       back=back, fdepth=fdepth, blind=blind))
 
 
 def pin_solid(p, axis, d, length, tip=0.3, tear=True):
@@ -187,8 +202,12 @@ def pin_solid(p, axis, d, length, tip=0.3, tear=True):
     return K.tube([p - a*5, p + a*M(length)], M(d/2), tear=tear, n=20)       # horizontal: teardrop keel
 
 
-def socket(p, axis, d, depth):
-    """Female hole for a pin/peg/plug of diameter d (model mm): d + 2*CLR, depth + CLR."""
+def socket(p, axis, d, depth, flat=False):
+    """Female hole for a pin/peg/plug of diameter d (model mm): d + 2*CLR, depth + CLR.  flat: plain
+    cylinder (a bridged roof) for holes that open on a bed face, instead of the 45-deg cone roof."""
+    if flat:
+        p = np.asarray(p, float); a = np.asarray(axis, float)
+        return K.cyl(p - a, p + a*M(depth + CLR), M(d + 2*CLR)/2, seg=32)
     return K.teardrop_hole(p, axis, M(d + 2*CLR), M(depth + CLR) + 1)
 
 
@@ -289,6 +308,14 @@ def thermal_module():
     for y0, y1, xe in ((-230.0, -200.0, 600.0), (245.0, 275.0, 592.0)):                # radiator support brackets
         parts.append(K.box(330, xe, y0, y1, 745, 760))
     parts.append(K.box(612, 668, -425, -292, 699, 748))                                 # e-compressor saddle on the plate
+    z_post = K.hood_bottom() - K.S_GAP
+    for s in (1, -1):                                   # hood magnet posts on the shroud (radiator support), 53-deg flare
+        x, y = HOOD_POST
+        flare = Manifold.hull_points(np.array([(xx, s*y + dy, 758.0) for xx in (342.0, 396.0) for dy in (-28, 28)]
+                                              + K.section_pts(np.array([x, s*y, 830.0]), (0, 0, 1), POST_R, False, 40)))
+        post = K.cyl((x, s*y, 829.99), (x, s*y, z_post), POST_R, seg=40)
+        pocket = K.teardrop_hole((x, s*y, z_post + 1), (0, 0, -1), M(K.MAG_D), M(K.MAG_H) + 1)
+        parts.append(K.union([flare, post]) - pocket)
     return K.union(parts)
 
 
@@ -301,6 +328,34 @@ def rear_bumper_structure(crash):
     aft = crash["rear_crash"] ^ boxm((X_RAMP, -1500, 0), (6000, 1500, 3000))
     cans = K.symy(K.cbox(X_RAMP, 4662, 300, 380, 560, 682, cs=14))
     return K.union([aft, cans])
+
+
+def cargo_posts():
+    """Cargo-deck posts: 3 mm square columns with a 50-deg flare to a 5.5 mm round cap, so the 3.5 mm
+    magnet pocket keeps a 1 mm wall."""
+    out = []
+    for x, y in K.CARGO_POSTS:
+        for s in (1, -1):
+            col = K.box(x - 30, x + 30, s*y - 30, s*y + 30, ZT, POST_TOP - 60)
+            flare = Manifold.hull_points(np.array([(x + dx, s*y + dy, POST_TOP - 90) for dx in (-30, 30) for dy in (-30, 30)]
+                                                  + K.section_pts(np.array([x, s*y, POST_TOP - 60]), (0, 0, 1), POST_R, False, 40)))
+            cap = K.cyl((x, s*y, POST_TOP - 60.01), (x, s*y, POST_TOP), POST_R, seg=40)
+            out.append(K.union([col, flare, cap]))
+    return K.union(out)
+
+
+def cargo_deck_kit():
+    """Cargo deck (as the kit's) with 2.5 mm bosses under the four magnet sites: the 1.2 mm deck alone is
+    too thin for a blind 2.25 mm pocket.  Printed upside down (top face on the bed)."""
+    x0, x1, hw = 3650.0, 4560.0, 640.0
+    deck = K.cbox(x0, x1, -hw, hw, K.Z_CARGO[0], K.Z_CARGO[1], ct=6)
+    bosses = [K.cyl((x, s*y, POST_TOP), (x, s*y, K.Z_CARGO[0] + 1), POST_R, seg=40) for x, y in K.CARGO_POSTS for s in (1, -1)]
+    grooves = [K.box(x0 + 40, x1 - 40, y - M(0.3), y + M(0.3), K.Z_CARGO[1] - M(0.6), K.Z_CARGO[1] + 1) for y in np.arange(-560, 561, 80)]
+    rings = [K.cyl((x, s*560, K.Z_CARGO[1] - M(0.6)), (x, s*560, K.Z_CARGO[1] + 1), 28, seg=24) for x in (3720, 4480) for s in (1, -1)]
+    handle = K.box(4400, 4520, -60, 60, K.Z_CARGO[1] - M(0.8), K.Z_CARGO[1] + 1)
+    towers = [K.cyl((3966, s*552, POST_TOP - 5), (3966, s*552, K.Z_CARGO[1] + 5), 90, seg=40) for s in (1, -1)]
+    mags = [K.cyl((x, s*y, POST_TOP - 1), (x, s*y, POST_TOP + M(K.MAG_H)), M(K.MAG_D)/2, seg=32) for x, y in K.CARGO_POSTS for s in (1, -1)]
+    return K.diff(K.union([deck] + bosses), grooves + rings + [handle] + mags + towers)
 
 
 def chassis_groups(B, R):
@@ -320,10 +375,11 @@ def chassis_groups(B, R):
             for s in (1, -1):
                 pins.append(pin_solid((x, s*yp, K.Z_SKIRT - K.S_GAP), (0, 0, 1), TOL["pin"], 2.0))
                 joint("pin", "chassis_baseplate_m2_bosses", "main_outer_body_shell", (x, s*yp, K.Z_SKIRT + K.S_GAP + M(1.0)),
-                      (0, 0, 1), TOL["pin"], 2.0)
+                      (0, 0, 1), TOL["pin"], 2.0, back=1.0, fdepth=2.25)
     cols = [K.symy(K.cbox(x - 60, x + 60, y - 60, y + 60, K.GC, K.Z_SKIRT - K.S_GAP)) ^ B["base"] for x, y in K.CLIP_M2]
     rear_posts = boxm((4300, -1500, 0), (6000, 1500, 3000))            # cargo posts on the rear struts
-    G["baseplate"] = K.union([skirt, crash["cargo_posts"] - rear_posts] + pins + cols)
+    posts = cargo_posts()
+    G["baseplate"] = K.union([skirt, posts - rear_posts] + pins + cols)
     # ---- front / rear subframe with suspension, steering, sway bars and the crash structure
     #      (bumper beam, crush cans, rails and their towers), so nothing of the baseplate hangs over them
     rbrk = K.box(470, 500, -345, -315, K.SUB_Z[1] - 2, 760)             # refrigerant line rest
@@ -333,9 +389,9 @@ def chassis_groups(B, R):
     feet = K.symy(K.box(K.PACK_X1 + C, 3490, 300, 380, ZT, 330))         # rails carried down to the undertray
     # the lower struts end at the bumper ramp: a cross-tie at their ends joins them, the cargo posts and
     # (by two webs) the rail kick-ups into one piece
-    tie = K.union([K.box(X_RAMP - 2*C - 34, X_RAMP - 2*C, -690, 690, 380, 430),
-                   K.symy(K.box(X_RAMP - 2*C - 34, X_RAMP - 2*C, 312, 368, 425, 505))])
-    G["rear_sub"] = K.union([crash["rear_subframe"], susp["rear_susp"], mounts, rails, feet, tie, crash["cargo_posts"] ^ rear_posts])
+    tie = K.union([K.box(X_RAMP - 2*C - 34, X_RAMP - 2*C - 1, -690, 690, 380, 430),        # 1 mm short of the cut plane:
+                   K.symy(K.box(X_RAMP - 2*C - 34, X_RAMP - 2*C - 1, 312, 368, 425, 505))])   # no coplanar faces
+    G["rear_sub"] = K.union([crash["rear_subframe"], susp["rear_susp"], mounts, rails, feet, tie, posts ^ rear_posts])
     G["_rear_bumper"] = rear_bumper_structure(crash)
     # ---- battery: tray housing and the 16 modules (8 drop-in pairs) + BMS chain
     G["tray"] = pack["tray"]
@@ -368,13 +424,50 @@ def chassis_groups(B, R):
 PAD_D, PAD_H, PILOT_DEPTH = 3.0, 1.5, 2.4          # model mm
 STD_M2 = [3, 4, 5, 6, 8, 10, 12]
 MOUNTS = [  # (group, x, y, kind, top of the module above the mount (full mm))
-    ("front_sub", 1205.0, 380.0, "locator", 0.0), ("front_sub", 1205.0, -380.0, "locator", 0.0),
+    ("front_sub", 1205.0, 365.0, "locator", 0.0), ("front_sub", 1205.0, -365.0, "locator", 0.0),
     ("rear_sub", 3540.0, 360.0, "screw", 320.0), ("rear_sub", 3540.0, -360.0, "screw", 320.0),
-    ("tray", 1550.0, 0.0, "screw", 372.0), ("tray", 1550.0, 510.0, "screw", 335.0), ("tray", 3200.0, 0.0, "locator", 0.0),
-    ("eaxle_front", 890.0, -120.0, "locator", 0.0), ("eaxle_front", 900.0, 157.0, "locator", 0.0),
-    ("eaxle_rear", 3840.0, -120.0, "locator", 0.0), ("eaxle_rear", 3830.0, 160.0, "locator", 0.0),
+    ("tray", 1550.0, 0.0, "screw", 372.0), ("tray", 1550.0, 620.0, "screw", 335.0), ("tray", 3200.0, 0.0, "locator", 0.0),
+    ("eaxle_front", 890.0, -90.0, "locator", 0.0), ("eaxle_front", 900.0, 157.0, "locator", 0.0),
+    ("eaxle_rear", 3840.0, -90.0, "locator", 0.0), ("eaxle_rear", 3830.0, 160.0, "locator", 0.0),
 ]
 FILE_OF = {}        # group key -> file stem (filled in by the part table)
+
+
+def axle_bores():
+    """Clearance bores for the 3 mm axles with a teardrop roof (point up, as the parts print upright)."""
+    r = M(v4.AXLE_D/2 + v4.AXLE_CLEAR)
+    out = []
+    for xa in (K.X_FA, K.X_RA):
+        pts = (K.section_pts(np.array([xa, -720.0, K.HUB_Z]), (0, 1, 0), r, True, 24, up=True)
+               + K.section_pts(np.array([xa, 720.0, K.HUB_Z]), (0, 1, 0), r, True, 24, up=True))
+        out.append(Manifold.hull_points(np.array(pts)))
+    return K.union(out)
+
+
+BODY_SCREW_ZBOT = {}      # (x, y) -> underside of the baseplate under the screw head (full mm)
+
+
+def underside_under(B, x, y, r):
+    """Highest point of the body underside within radius r of (x, y): where a counterbore entered from
+    below must start so that its whole rim is in material."""
+    col = B["body"] ^ K.cyl((x, y, K.GC - 5), (x, y, K.Z_SKIRT), r, seg=24)
+    lo, hi = K.GC, K.Z_SKIRT - 40.0
+    full = math.pi*r*r*0.97
+    for _ in range(14):
+        mid = 0.5*(lo + hi)
+        if K.slice_poly(col, mid).area >= full:
+            hi = mid
+        else:
+            lo = mid
+    return hi
+
+
+def screw_hole_from_below(x, y, z_top, spec, z_bot):
+    """Clearance hole + head counterbore entered from below; the counterbore starts at z_bot."""
+    hh, rh = M(spec["head_h"]), M(spec["head"]/2)
+    return K.union([K.cyl((x, y, K.GC - 1), (x, y, z_top + 1), M(spec["clear"]/2), seg=24),
+                    K.cyl((x, y, K.GC - 1), (x, y, z_bot + hh), rh, seg=24),
+                    K.cyl((x, y, z_bot + hh - 0.01), (x, y, z_bot + hh + rh), rh, 0.0, seg=24)])
 
 
 def mount_geometry():
@@ -387,17 +480,21 @@ def mount_geometry():
         pocket_top = top + C
         c = [K.cyl((x, y, ZT - 1), (x, y, pocket_top), M(PAD_D/2) + C, seg=32),
              K.cyl((x, y, pocket_top - 0.01), (x, y, pocket_top + M(PAD_D/2) + C), M(PAD_D/2) + C, 0.0, seg=32)]
-        joint("boss", "chassis_baseplate_m2_bosses", g, (x, y, ZT + M(PAD_H)/2), (0, 0, 1), PAD_D, PAD_H)
+        joint("boss", "chassis_baseplate_m2_bosses", g, (x, y, ZT + M(PAD_H)/2), (0, 0, 1), PAD_D, PAD_H,
+              back=PAD_H/2, fdepth=PAD_H + CLR)
         if kind == "screw":
             pilots.append(K.cyl((x, y, ZT - M(PILOT_DEPTH - PAD_H)), (x, y, top + 1), M(TOL["m2_pilot"]/2), seg=24))
             a = (h_top - pocket_top)/SCALE                       # module material above the pocket (model mm)
-            L = max(l for l in STD_M2 if l <= a + PILOT_DEPTH)
-            cb = a - L + PILOT_DEPTH                             # counterbore depth so the screw just bottoms in the pilot
+            # longest standard screw whose head still sits 0.25 mm below the surface; tip 0.25 mm short of the pilot bottom
+            L = max(l for l in STD_M2 if a - (l - PILOT_DEPTH + CLR) >= TOL["m2_head_h"] + CLR)
+            cb = a - L + PILOT_DEPTH - CLR                       # counterbore depth
             c.append(K.cyl((x, y, pocket_top - 1), (x, y, h_top + 400), M(TOL["m2_clear"]/2), seg=24))
             c.append(K.cyl((x, y, h_top - M(cb)), (x, y, h_top + 400), M(TOL["m2_head"]/2), seg=32))
-            SCREWS.append(dict(size="M2", length=L, head="button head (ISO 7380), self-tapping into the printed pilot",
-                               group=g, where=f"{FILE_OF[g]} to baseplate boss at x {x:.0f}, y {y:.0f} (from above)",
-                               clamp_mm=round(a - cb, 2), engagement_mm=PILOT_DEPTH))
+            SCREWS.append(dict(size="M2", length=L, head="button head", group=g,
+                               where=f"{FILE_OF[g]} to baseplate boss at x {x:.0f}, y {y:.0f} (from above)",
+                               clamp_mm=round(a - cb, 2), engagement_mm=round(L - (a - cb) - CLR, 2)))
+            joint("screw", None, g, (x, y, pocket_top + M(0.5)), (0, 0, 1), 2.0, 1.0, back=0.5,
+                  fdepth=(h_top - M(cb) - pocket_top)/SCALE - 0.1)
         cuts.setdefault(g, []).extend(c)
     return pads, pilots, cuts
 
@@ -424,7 +521,7 @@ def interior_groups(envelope):
         for x, y in pts:
             pegs.append(pin_solid((x, y, zf), (0, 0, 1), TOL["peg"], 1.5))
             sockets.setdefault(g, []).append(socket((x, y, zf), (0, 0, 1), TOL["peg"], 1.5))
-            joint("peg", "interior_floor_tub", g, (x, y, zf + M(0.75)), (0, 0, 1), TOL["peg"], 1.5)
+            joint("peg", "interior_floor_tub", g, (x, y, zf + M(0.75)), (0, 0, 1), TOL["peg"], 1.5, back=0.75, fdepth=1.75)
     G["floor_tub"] = K.diff(K.union([sec["floor"]] + pegs), holes[:6])
     G["seats"] = K.diff(sec["seats_front"] ^ above, sockets["seats"])
     G["bench"] = K.diff(sec["bench"] ^ above, sockets["bench"])
@@ -433,10 +530,12 @@ def interior_groups(envelope):
     sock = Manifold.hull_points(np.array(K.section_pts(hub + a*2, a, M(K.SW_PEG/2 + CLR), False, 24)
                                          + K.section_pts(hub - a*M(4.4), a, M(K.SW_PEG/2 + CLR), False, 24)))
     G["dashboard"] = K.diff(sec["dash"] ^ above, holes[6:] + [sock] + sockets["dashboard"])
-    joint("peg", "dashboard_steering_console", "dashboard_steering_console", tuple(hub - a*M(2.0)), tuple(-a), K.SW_PEG, 4.0)
+    joint("peg", "dashboard_steering_console", "dashboard_steering_console", tuple(hub - a*M(2.0)), tuple(-a), K.SW_PEG, 4.0,
+          back=2.0, fdepth=4.3)
     JOINTS[-1].update(male="dashboard_steering_console", male_shell="steering_wheel")
     for x, y in K.TUB_PEGS:
-        joint("peg", "battery_tray_lower_housing", "interior_floor_tub", (x, y, K.Z_TUB + M(0.6)), (0, 0, 1), 2.0, 1.2)
+        joint("peg", "battery_tray_lower_housing", "interior_floor_tub", (x, y, K.Z_TUB + M(0.6)), (0, 0, 1), 2.0, 1.2,
+              back=0.6, fdepth=(K.Z_FLOOR - K.Z_TUB)/SCALE - 0.05)
     return G
 
 
@@ -490,6 +589,15 @@ def window_slabs(xface, ys, z0, z1, d_out, d_in, inward):
 CANOPY_PINS = []
 
 
+def trim_path(path, d):
+    """Polyline shortened by d at both ends."""
+    p = [np.asarray(q, float) for q in path]
+    for i, j in ((0, 1), (-1, -2)):
+        u = p[j] - p[i]
+        p[i] = p[i] + u/np.linalg.norm(u)*d
+    return [tuple(q) for q in p]
+
+
 def body_features(B, R, fe, re, z_hb, log=print):
     """Bosses (E) and cuts (C) for the main shell, tailgate, canopy and hood, plus the lenses."""
     s = K.S_GAP
@@ -498,49 +606,64 @@ def body_features(B, R, fe, re, z_hb, log=print):
     zt, zb = K.Z_CAN - s, K.Z_SKIRT + s
     up, down = (0, 0, 1), (0, 0, -1)
     # -- body shell <-> baseplate: screws from below into pilot bosses
-    for (x, y), spec, size in ((K.CLIP_M2[0], K.M2, "M2"), (K.CLIP_M3[0], K.M3, "M3"), (K.CLIP_M2[1], K.M2, "M2"), (K.CLIP_M3[1], K.M3, "M3")):
+    for (x, y), spec, size, hb, hin in ((K.CLIP_M2[0], K.M2, "M2", 58.0, 58.0), (K.CLIP_M3[0], K.M2, "M2", 42.0, 28.0),
+                                        (K.CLIP_M2[1], K.M2, "M2", 58.0, 58.0), (K.CLIP_M3[1], K.M2, "M2", 42.0, 28.0)):
         for sg in (1, -1):
-            # boss block reaches out to the skin, so it never depends on the support fill
-            E["main"].append(K.cbox(x - 58, x + 58, min(sg*(y - 58), sg*1200), max(sg*(y - 58), sg*1200), zb, zb + M(9)))
+            zbot = BODY_SCREW_ZBOT[(x, sg*y)]
+            # boss block reaches out to the skin, so it never depends on the support fill (rocker-end bosses stop
+            # 28 mm inboard of the screw, clear of the cabin-floor sill trims)
+            E["main"].append(K.cbox(x - hb, x + hb, min(sg*(y - hin), sg*1200), max(sg*(y - hin), sg*1200), zb, zb + M(9)))
             Cc["main"].append(K.pilot_hole_up(x, sg*y, zb, 8.0, spec))
             head_h = spec["head_h"]
-            L = 10
-            SCREWS.append(dict(size=size, length=L, head="button head (ISO 7380), self-tapping into the printed pilot",
-                               group="main", where=f"body shell to baseplate at x {x:.0f}, y {sg*y:.0f} (from below)",
-                               clamp_mm=round((zb - K.GC)/SCALE - head_h, 2), engagement_mm=round(L - ((zb - K.GC)/SCALE - head_h), 2)))
-            joint("screw", None, "chassis_baseplate_m2_bosses", (x, sg*y, K.GC + M(head_h + 2.0)), up,
-                  2.0 if size == "M2" else 3.0, 2.0)
+            clamp = (zb - zbot)/SCALE - head_h
+            L = max(l for l in STD_M2 if l - clamp <= 7.7)           # tip stays 0.3 mm short of the 8 mm pilot
+            SCREWS.append(dict(size=size, length=L, head="button head", group="main",
+                               where=f"body shell to baseplate at x {x:.0f}, y {sg*y:.0f} (from below)",
+                               clamp_mm=round(clamp, 2), engagement_mm=round(L - clamp, 2)))
+            joint("screw", None, "chassis_baseplate_m2_bosses", (x, sg*y, zbot + M(head_h + 2.0)), up,
+                  2.0, 2.0, back=head_h + 2.0, fdepth=(K.Z_SKIRT - K.S_GAP - zbot)/SCALE - 0.1)
     # -- sockets for the baseplate pins under the door sills
     for xs in K.DOOR_PINS:
         for x in xs:
             yp = float(K.skin_y(x, [K.Z_SKIRT])[0]) - M(K.D_DOOR)/2
             for sg in (1, -1):
-                Cc["main"].append(socket((x, sg*yp, zb), up, TOL["pin"], 1.5))
+                Cc["main"].append(socket((x, sg*yp, zb), up, TOL["pin"], 2.0))
     # -- canopy pins: the canopy overlaps the door tops on a strip only ~1.5 mm wide (shoulder tumblehome),
     #    so the pins stand on the A-pillar bases and on bosses at the C-pillar bases
+    can_b = B["body"] ^ R["canopy"]
+    can_sl = None
+    for dz in (1.0, M(1.2), M(2.3)):                       # flat-roof sockets and pockets: 2.25 mm deep
+        sl_ = K.slice_poly(can_b, K.Z_CAN + s + dz)
+        can_sl = sl_ if can_sl is None else can_sl.intersection(sl_)
     for x, front in ((1590.0, True), (3700.0, False)):
-        if front:
-            yp = float(K.skin_y(x, [K.Z_CAN - 10])[0]) - M(K.D_DOOR)/2
+        if front:                                          # pin on the door top (inner face skin - D_DOOR), socket in the canopy
+            sk = float(K.skin_y(x, [K.Z_CAN - 10])[0])
+            bp_ = K.best_point(can_sl, (x - 10.0, x + 10.0), (sk - M(K.D_DOOR) + 20.0, sk - 20.0), M(1.6), step=2.0)
+            yp = bp_[1] if bp_ else sk - M(K.D_DOOR)/2
+            x = bp_[0] if bp_ else x
+            log(f"    A-pillar roof pins at x {x:.0f}, |y| {yp:.0f}" + ("" if bp_ else " (fallback)"))
         else:
-            yp = float(K.skin_y(x, [K.Z_CAN + s + M(1.75) + 10])[0]) - M(TOL["pin_socket"]/2) - 15.0
+            yp = float(K.skin_y(x, [K.Z_CAN + s + M(3.25) + 10])[0]) - M(TOL["pin_socket"]/2) - 40.0
         for sg in (1, -1):
             if not front:
                 E["main"].append(K.cbox(x - 60, x + 60, min(sg*(yp - 60), sg*1200), max(sg*(yp - 60), sg*1200), zt - M(5), zt))
             E["pins"].append(pin_solid((x, sg*yp, zt), up, TOL["pin"], 2.0))
-            Cc["canopy"].append(socket((x, sg*yp, K.Z_CAN + s), up, TOL["pin"], 1.5))
-            joint("pin", "main_outer_body_shell", "removable_roof_solar_canopy", (x, sg*yp, K.Z_CAN + s + M(0.75)), up, TOL["pin"], 1.5)
+            Cc["canopy"].append(socket((x, sg*yp, K.Z_CAN + s), up, TOL["pin"], 2.0, flat=True))   # canopy prints on this face
+            joint("pin", "main_outer_body_shell", "removable_roof_solar_canopy", (x, sg*yp, K.Z_CAN + s + M(0.75)), up, TOL["pin"], 2.0,
+                  back=0.75, fdepth=2.25)
     # -- canopy magnets over the C-pillars
-    can_sl = K.slice_poly(B["body"] ^ R["canopy"], K.Z_CAN + s + 1)
-    bp = K.best_point(can_sl, (3560.0, 3900.0), (835.0, 880.0), M(2.0), step=5.0)
+    # 0.6 mm wall round the pocket in the canopy; the body-shell boss starts 0.5 mm inboard of the pocket,
+    # outboard of the rear wheel-house wall (the support fill cannot reach under it there)
+    bp = K.best_point(can_sl, (3800.0, 3960.0), (735.0, 880.0), M(2.35), step=5.0)
     if bp is None:
         raise RuntimeError("no canopy magnet site")
     for sg in (1, -1):
         x, y = bp[0], sg*bp[1]
-        E["main"].append(K.cbox(x - 60, x + 60, min(y - sg*60, sg*1200), max(y - sg*60, sg*1200), zt - M(5), zt))
+        E["main"].append(K.cbox(x - 60, x + 60, min(y - sg*45, sg*1200), max(y - sg*45, sg*1200), zt - M(5), zt))
         Cc["main"].append(K.teardrop_hole((x, y, zt + 1), down, M(K.MAG_D), M(K.MAG_H) + 1))
-        Cc["canopy"].append(K.teardrop_hole((x, y, K.Z_CAN + s - 1), up, M(K.MAG_D), M(K.MAG_H) + 1))
-        joint("magnet", None, "main_outer_body_shell", (x, y, zt - M(1.0)), down, 3.0, 2.0)
-        joint("magnet", None, "removable_roof_solar_canopy", (x, y, K.Z_CAN + s + M(1.0)), up, 3.0, 2.0)
+        Cc["canopy"].append(K.cyl((x, y, K.Z_CAN + s - 1), (x, y, K.Z_CAN + s + M(K.MAG_H)), M(K.MAG_D)/2, seg=32))
+        joint("magnet", None, "main_outer_body_shell", (x, y, zt - M(1.0)), down, 3.0, 2.0, back=1.0, fdepth=2.25, blind=True)
+        joint("magnet", None, "removable_roof_solar_canopy", (x, y, K.Z_CAN + s + M(1.0)), up, 3.0, 2.0, back=1.0, fdepth=2.25, blind=True)
     MAGNETS.append(dict(where="roof canopy to body shell, over the C-pillars", count=4))
     CANOPY_PINS[:] = [1590.0, 3700.0]
     log(f"    canopy magnets at x {bp[0]:.0f}, |y| {bp[1]:.0f}")
@@ -553,9 +676,15 @@ def body_features(B, R, fe, re, z_hb, log=print):
             E["main"].append(K.cbox(x - 60, x + 60, min(sg*(y - 60), sg*ye), max(sg*(y - 60), sg*ye), z_hb - M(4.5), z_hb - s))
             Cc["main"].append(K.teardrop_hole((x, sg*y, z_hb - s + 1), down, M(K.MAG_D), M(K.MAG_H) + 1))
             Cc["hood"].append(K.teardrop_hole((x, sg*y, z_hb - 1), up, M(K.MAG_D), M(K.MAG_H) + 1))
-            joint("magnet", None, "main_outer_body_shell", (x, sg*y, z_hb - s - M(1.0)), down, 3.0, 2.0)
-            joint("magnet", None, "hood_solar_bonnet", (x, sg*y, z_hb + M(1.0)), up, 3.0, 2.0)
-    MAGNETS.append(dict(where="hood to body shell ledge", count=8))
+            joint("magnet", None, "main_outer_body_shell", (x, sg*y, z_hb - s - M(1.0)), down, 3.0, 2.0, back=1.0, fdepth=2.25, blind=True)
+            joint("magnet", None, "hood_solar_bonnet", (x, sg*y, z_hb + M(1.0)), up, 3.0, 2.0, back=1.0, fdepth=2.25, blind=True)
+    MAGNETS.append(dict(where="hood to body shell ledge", count=4))
+    for sg in (1, -1):                       # front pair: the hood is only ~2.8 mm thick here, so flat-roof pockets
+        x, y = HOOD_POST
+        Cc["hood"].append(K.cyl((x, sg*y, z_hb - 1), (x, sg*y, z_hb + M(K.MAG_H)), M(K.MAG_D)/2, seg=32))
+        joint("magnet", None, "hood_solar_bonnet", (x, sg*y, z_hb + M(1.0)), up, 3.0, 2.0, back=1.0, fdepth=2.25, blind=True)
+        joint("magnet", None, "front_e_axle_and_inverter", (x, sg*y, z_hb - s - M(1.0)), down, 3.0, 2.0, back=1.0, fdepth=2.25, blind=True)
+    MAGNETS.append(dict(where="hood to the radiator-support posts", count=4))
     Cc["hood"].append(K.teardrop_hole((725.0, 230.0, z_hb - 1), up, M(K.WIRE_D), M(3.0)))
     rc = M(K.LED_W)/2
     lenses = []
@@ -566,7 +695,7 @@ def body_features(B, R, fe, re, z_hb, log=print):
     xfi = lambda y: float(np.interp(y, ys, xf))
     path = [(x + M(K.T_SHELL) + rc, y, zc) for x, y in zip(xf, ys)]
     E["main"].append(K.tube(path, rc + M(K.T_SHELL), tear=True))
-    Cc["main"].append(K.tunnel(path, rc))
+    Cc["main"].append(K.tunnel(trim_path(path, M(K.T_SHELL)), rc))      # closed ends: no coplanar end caps
     Cc["main"].append(K.tunnel([(xf[21] + M(K.T_SHELL) + rc, 0.0, zc), (xf[21] + 300, 0.0, zc)], M(1.5)))
     for a, b in zip(ys[1:-2], ys[2:-1]):
         if abs(a) <= 800 and abs(b) <= 800:
@@ -574,10 +703,12 @@ def body_features(B, R, fe, re, z_hb, log=print):
     zw = (880.0, 932.0)
     yl = np.linspace(-780, 780, 40)
     lens_h = B["body"] ^ window_slabs(xfi, yl, zw[0], zw[1], 20.0, M(K.T_SHELL), +1)
-    lenses.append(lens_h)
+    groove = window_slabs(xfi, yl, zc - M(0.4), zc + M(0.4), -(M(K.T_SHELL) - M(0.5)), M(K.T_SHELL) + 20.0, +1)
+    lenses.append(lens_h - groove)
     yo = np.r_[-780 - C, yl[1:-1], 780 + C]
     Cc["main"].append(window_slabs(xfi, yo, zw[0] - C, zw[1] + C, 20.0, M(K.T_SHELL) + rc, +1))
     joint("lens", "clear_lens_headlights_taillights", "main_outer_body_shell", (xfi(0.0) + M(K.T_SHELL)/2, 0.0, sum(zw)/2), up, None, None)
+    joint("lens", "clear_lens_headlights_taillights", "main_outer_body_shell", (xfi(0.0) + M(K.T_SHELL)/2, 0.0, sum(zw)/2), (1, 0, 0), None, None)
     # -- tail bar (tailgate): channel, wire exit, clear-lens window
     zc = 1192.0
     ys = np.linspace(-640, 640, 33)
@@ -585,15 +716,18 @@ def body_features(B, R, fe, re, z_hb, log=print):
     xri = lambda y: float(np.interp(y, ys, xr))
     path = [(x - M(K.T_SHELL) - rc, y, zc) for x, y in zip(xr, ys)]
     E["tail"].append(K.tube(path, rc + M(K.T_SHELL), tear=True))
-    Cc["tail"].append(K.tunnel(path, rc))
+    Cc["tail"].append(K.tunnel(trim_path(path, M(K.T_SHELL)), rc))
     Cc["tail"].append(K.tunnel([(xr[16] - M(K.T_SHELL) - rc, 0.0, zc), (xr[16] - 300, 0.0, zc)], M(1.5)))
     zw = (1170.0, 1214.0)
     yl = np.linspace(-600, 600, 31)
-    lens_t = B["body"] ^ window_slabs(xri, yl, zw[0], zw[1], 20.0, M(K.T_SHELL), -1)
-    lenses.append(lens_t)
+    # the tail bar sits on a sloping face: the lens is the skin layer itself (constant 1.6 mm, full height)
+    lens_t = (B["body"] ^ window_slabs(xri, yl, zw[0], zw[1], 20.0, M(K.T_SHELL) + 60.0, -1)) - B["inset_shell"]
+    groove = window_slabs(xri, yl, zc - M(0.4), zc + M(0.4), -(M(K.T_SHELL) - M(0.5)), M(K.T_SHELL) + 20.0, -1)
+    lenses.append(largest(lens_t - groove)[0])
     yo = np.r_[-600 - C, yl[1:-1], 600 + C]
-    Cc["tail"].append(window_slabs(xri, yo, zw[0] - C, zw[1] + C, 20.0, M(K.T_SHELL) + rc, -1))
+    Cc["tail"].append(window_slabs(xri, yo, zw[0] - C, zw[1] + C, 20.0, M(K.T_SHELL) + rc + 20.0, -1))
     joint("lens", "clear_lens_headlights_taillights", "tailgate_rear_hatch", (xri(0.0) - M(K.T_SHELL)/2, 0.0, sum(zw)/2), up, None, None)
+    joint("lens", "clear_lens_headlights_taillights", "tailgate_rear_hatch", (xri(0.0) - M(K.T_SHELL)/2, 0.0, sum(zw)/2), (1, 0, 0), None, None)
     # -- rear corner lamps in the canopy, wire drop into a socket in the body shell
     for sg in (1, -1):
         yy = np.linspace(690, 780, 7)
@@ -603,7 +737,7 @@ def body_features(B, R, fe, re, z_hb, log=print):
         px, py, _ = path[3]
         Cc["canopy"].append(K.tunnel([(px, py, 1160.0), (px, py, K.Z_CAN - 5)], M(1.5)))
         E["main"].append(K.cbox(px - 60, px + 60, min(py - sg*60, sg*1200), max(py - sg*60, sg*1200), zt - M(5), zt))
-        Cc["main"].append(K.teardrop_hole((px, py, zt + 1), down, M(3.0), M(6.0)))
+        Cc["main"].append(K.teardrop_hole((px, py, zt + 1), down, M(3.0), zt + 1 - 760.0))   # down into the cargo area
         for y, x in zip(yy[1:-1:2], xc_[1:-1:2]):
             Cc["canopy"].append(K.tunnel([(x + 20, sg*y, 1160.0), (x - M(K.T_SHELL) - rc - 10, sg*y, 1160.0)], M(0.5)))
     # -- solar strings: roof -> A-pillars (canopy) -> body shell -> rocker connectors; tailgate string
@@ -639,17 +773,18 @@ def body_features(B, R, fe, re, z_hb, log=print):
         Cc["tail"].append(K.teardrop_hole((x, y, zl + s - 1), up, M(K.MAG_D), M(K.MAG_H) + 1))
         E["main"].append(K.box(x - 60, xo, y - 60, y + 60, zl - s - M(5), zl - s))
         Cc["main"].append(K.teardrop_hole((x, y, zl - s + 1), down, M(K.MAG_D), M(K.MAG_H) + 1))
-        joint("magnet", None, "tailgate_rear_hatch", (x, y, zl + s + M(1.0)), up, 3.0, 2.0)
-        joint("magnet", None, "main_outer_body_shell", (x, y, zl - s - M(1.0)), down, 3.0, 2.0)
+        joint("magnet", None, "tailgate_rear_hatch", (x, y, zl + s + M(1.0)), up, 3.0, 2.0, back=1.0, fdepth=2.25, blind=True)
+        joint("magnet", None, "main_outer_body_shell", (x, y, zl - s - M(1.0)), down, 3.0, 2.0, back=1.0, fdepth=2.25, blind=True)
     MAGNETS.append(dict(where="tailgate bottom edge to body shell", count=4))
     for yy in (-300.0, 300.0):
         xh = 4236.0 - 30*(yy/600)**2
         zr = float(v4.ROOF(xh)) - 60
-        E["tail"].append(K.box(xh + s, xh + s + M(4), yy - 60, yy + 60, zr - 60, zr + 20) ^ B["base"])
-        Cc["tail"].append(K.teardrop_hole((xh + s - 1, yy, zr - 15), (1, 0, 0), M(K.MAG_D), M(K.MAG_H) + 1))
-        Cc["canopy"].append(K.teardrop_hole((xh - s + 1, yy, zr - 15), (-1, 0, 0), M(K.MAG_D), M(K.MAG_H) + 1))
-        joint("magnet", None, "tailgate_rear_hatch", (xh + s + M(1.0), yy, zr - 15), (1, 0, 0), 3.0, 2.0)
-        joint("magnet", None, "removable_roof_solar_canopy", (xh - s - M(1.0), yy, zr - 15), (-1, 0, 0), 3.0, 2.0)
+        zm = zr - 35
+        E["tail"].append(K.box(xh + s, xh + s + M(4), yy - 60, yy + 60, zm - 70, zr + 20) ^ B["base"])
+        Cc["tail"].append(K.teardrop_hole((xh + s - 1, yy, zm), (1, 0, 0), M(K.MAG_D), M(K.MAG_H) + 1))
+        Cc["canopy"].append(K.teardrop_hole((xh - s + 1, yy, zm), (-1, 0, 0), M(K.MAG_D), M(K.MAG_H) + 1))
+        joint("magnet", None, "tailgate_rear_hatch", (xh + s + M(1.0), yy, zm), (1, 0, 0), 3.0, 2.0, back=1.0, fdepth=2.25, blind=True)
+        joint("magnet", None, "removable_roof_solar_canopy", (xh - s - M(1.0), yy, zm), (-1, 0, 0), 3.0, 2.0, back=1.0, fdepth=2.25, blind=True)
     MAGNETS.append(dict(where="tailgate hinge edge to roof canopy", count=4))
     return E, Cc, lenses
 
@@ -673,7 +808,7 @@ def door_cards():
     """Four trim cards that clip onto the inner face of the body shell's door panels with two
     pegs each; armrest, map pocket, speaker grille, pull handle recess and trim inlay."""
     cards, slab_holes = [], []
-    x_rng = {True: (1470.0, 2460.0), False: (2585.0, 3420.0)}
+    x_rng = {True: (1500.0, 2460.0), False: (2585.0, 3420.0)}     # front card starts behind the rocker-screw boss
     z0, z1 = 480.0, K.Z_CAN - K.S_GAP - 20
     fe, re = K.door_edges()
     # sampled exactly like the door-panel inner face (DOOR_GRID), offset along y by the clearance
@@ -696,7 +831,8 @@ def door_cards():
                 yin = float(K.skin_y(xp, [zp])[0]) - M(K.D_DOOR)
                 card = K.union([card, pin_solid((xp, s*(yin - gap), zp), (0, s, 0), TOL["pin"], 1.25, tear=False)])
                 slab_holes.append(K.teardrop_hole((xp, s*(yin - 10), zp), (0, s, 0), M(TOL["pin_socket"]), 10 + M(1.0 + CLR) + 1))
-                joint("pin", "door_cards_set", "main_outer_body_shell", (xp, s*(yin + M(0.5)), zp), (0, s, 0), TOL["pin"], 1.0)
+                joint("pin", "door_cards_set", "main_outer_body_shell", (xp, s*(yin + M(0.5)), zp), (0, s, 0), TOL["pin"], 1.0,
+                      back=0.5, fdepth=1.25)
             cards.append(largest(card)[0])
     return K.union(cards), slab_holes
 
@@ -713,7 +849,7 @@ PARTS = [  # (folder, file stem, group key, expected shells, print orientation n
     ("02_powertrain", "front_e_axle_and_inverter", "eaxle_front", 1, "standing on its feet as installed"),
     ("02_powertrain", "rear_e_axle_and_inverter", "eaxle_rear", 1, "standing on its feet as installed"),
     ("02_powertrain", "hv_wiring_harness_conduits", "harness", 2, "front and rear harness, carrier straps on the bed"),
-    ("03_interior", "interior_floor_tub", "floor_tub", 2, "cabin floor and cargo deck, flat on the bed"),
+    ("03_interior", "interior_floor_tub", "floor_tub", 2, "cabin floor flat on the bed; cargo deck upside down beside it"),
     ("03_interior", "front_bucket_seats_pair", "seats", 2, "seat bases on the bed"),
     ("03_interior", "rear_bench_seat", "bench", 1, "seat base on the bed"),
     ("03_interior", "dashboard_steering_console", "dashboard", 2, "dashboard upright; steering wheel face down beside it"),
@@ -757,6 +893,9 @@ def wheel_placements():
 
 def build(res=6.0, mirrors="mirror", log=print):
     t0 = time.time()
+    for reg in (JOINTS, SCREWS, MAGNETS):
+        reg.clear()
+    BODY_SCREW_ZBOT.clear()
     apply_tolerances()
     B = K.build_body_kit(res, mirrors, log=log)
     z_hb = K.hood_bottom()
@@ -769,7 +908,7 @@ def build(res=6.0, mirrors="mirror", log=print):
     G.update(interior_groups(env))
     wl = K.steering_wheel()
     G["steering_wheel"] = K.place_steering_wheel(wl)
-    G["cargo_deck"] = K.cargo_deck()
+    G["cargo_deck"] = cargo_deck_kit()
     cards, slab_holes = door_cards()
     G["door_cards"] = cards
     tray_pegs = [pin_solid((x, y, K.Z_PACK_TOP), (0, 0, 1), 2.0, 2.0) for x, y in K.TUB_PEGS]
@@ -778,14 +917,14 @@ def build(res=6.0, mirrors="mirror", log=print):
     # ---- clearance pass: the part installed first wins, the later one is offset by 0.25 mm
     rules = [  # (winner, loser, mode): 'slot' when the loser is installed first, 'drape' when it goes on later
         ("eaxle_front", "harness", "slot"), ("eaxle_rear", "harness", "slot"),
-        ("harness", "baseplate", "slot"), ("harness", "front_sub", "drape"), ("harness", "rear_sub", "drape"),
-        ("harness", "tray", "drape"), ("harness", "dashboard", "drape"),
+        ("harness", "baseplate", "slot"), ("harness", "front_sub", "drape_c"), ("harness", "rear_sub", "drape_c"),
+        ("harness", "tray", "drape_c"), ("harness", "dashboard", "drape_c"),
         ("eaxle_front", "front_sub", "slot"), ("eaxle_rear", "rear_sub", "slot"),
         ("eaxle_front", "baseplate", "slot"), ("eaxle_rear", "baseplate", "slot"),
         ("front_sub", "baseplate", "slot"), ("rear_sub", "baseplate", "slot"),
-        ("tray", "baseplate", "slot"), ("tray", "modules", "drape"),
-        ("tray", "dashboard", "drape"), ("tray", "floor_tub", "drape"),
-        ("dashboard", "floor_tub", "slot"), ("dashboard", "seats", "drape"),
+        ("tray", "baseplate", "slot"), ("tray", "modules", "drape_c"),     # modules drop 0.25 mm onto the cold plate
+        ("tray", "dashboard", "drape_c"), ("tray", "floor_tub", "drape"),   # the cabin floor rests on the battery frame
+        ("dashboard", "floor_tub", "slot"), ("dashboard", "seats", "drape_c"),
     ]
     carved = {}
     for win, lose, mode in rules:
@@ -795,19 +934,20 @@ def build(res=6.0, mirrors="mirror", log=print):
     log(f"  clearance pass: {len(carved)} contacts offset ({time.time() - t0:.0f} s)")
     G["baseplate"] = K.union([G["baseplate"], K.union(pads)])          # boss pads after the pass
     # ---- holes that pass through several chassis parts
-    ab = K.axle_bores()
+    ab = axle_bores()
     base_cuts = [ab] + pilots
-    for x, y in K.CLIP_M2:
-        base_cuts += [K.screw_hole_from_below(x, s*y, K.Z_SKIRT, K.M2) for s in (1, -1)]
-    for x, y in K.CLIP_M3:
-        base_cuts += [K.screw_hole_from_below(x, s*y, K.Z_SKIRT, K.M3) for s in (1, -1)]
+    for x, y in list(K.CLIP_M2) + list(K.CLIP_M3):                   # body screws: counterbores from the local underside
+        for s_ in (1, -1):
+            BODY_SCREW_ZBOT[(x, s_*y)] = underside_under(B, x, s_*y, M(K.M2["head"]/2) + 16)
+    for x, y in list(K.CLIP_M2) + list(K.CLIP_M3):
+        base_cuts += [screw_hole_from_below(x, s*y, K.Z_SKIRT, K.M2, BODY_SCREW_ZBOT[(x, s*y)]) for s in (1, -1)]
     post_cuts = {"baseplate": [], "rear_sub": []}
     for x, y in K.CARGO_POSTS:
         g = "rear_sub" if x > 4300 else "baseplate"
-        post_cuts[g] += [K.teardrop_hole((x, s*y, K.Z_CARGO[0] + 1), (0, 0, -1), M(K.MAG_D), M(K.MAG_H) + 1) for s in (1, -1)]
+        post_cuts[g] += [K.teardrop_hole((x, s*y, POST_TOP + 1), (0, 0, -1), M(K.MAG_D), M(K.MAG_H) + 1) for s in (1, -1)]
         for s in (1, -1):
-            joint("magnet", None, FILE_OF[g], (x, s*y, K.Z_CARGO[0] - M(1.0)), (0, 0, -1), 3.0, 2.0)
-            joint("magnet", None, "cargo_deck", (x, s*y, K.Z_CARGO[0] + M(1.0)), (0, 0, 1), 3.0, 2.0)
+            joint("magnet", None, FILE_OF[g], (x, s*y, POST_TOP - M(1.0)), (0, 0, -1), 3.0, 2.0, back=1.0, fdepth=2.25, blind=True)
+            joint("magnet", None, "cargo_deck", (x, s*y, POST_TOP + M(1.0)), (0, 0, 1), 3.0, 2.0, back=1.0, fdepth=2.25, blind=True)
     base_cuts += post_cuts["baseplate"]
     G["rear_sub"] = K.diff(G["rear_sub"], post_cuts["rear_sub"])
     MAGNETS.append(dict(where="cargo deck on its four posts", count=8))
@@ -824,7 +964,8 @@ def build(res=6.0, mirrors="mirror", log=print):
     for x, y in K.TUB_SCREWS:
         for s in (1, -1):
             tub_pilots.append(K.teardrop_hole((x, s*y, K.Z_PACK_TOP + 1), (0, 0, -1), M(TOL["m2_pilot"]), M(7.0)))
-            joint("screw", None, "interior_floor_tub", (x, s*y, K.Z_TUB + M(0.5)), (0, 0, 1), 2.0, 1.0)
+            joint("screw", None, "interior_floor_tub", (x, s*y, K.Z_TUB + M(0.5)), (0, 0, 1), 2.0, 1.0,
+                  back=0.5, fdepth=(zb - K.Z_TUB)/SCALE - 0.1)
             clamp = (zb - M(K.M2["head_h"]) - K.Z_TUB)/SCALE
             SCREWS.append(dict(size="M2", length=8, head="button head (ISO 7380), self-tapping into the printed pilot",
                                group="floor_tub", where=f"cabin floor to battery side frame at x {x:.0f}, y {s*y:.0f} (from above)",
@@ -832,7 +973,7 @@ def build(res=6.0, mirrors="mirror", log=print):
     G["tray"] = K.diff(G["tray"], tub_pilots)
     for xa in (K.X_FA, K.X_RA):
         for yy, part in ((660.0, "front_sub" if xa == K.X_FA else "rear_sub"), (0.0, "eaxle_front" if xa == K.X_FA else "eaxle_rear")):
-            joint("axle", None, FILE_OF[part], (xa, yy, K.HUB_Z), (0, 1, 0), TOL["axle"], 2.0)
+            joint("axle", None, FILE_OF[part], (xa, yy, K.HUB_Z), (0, 1, 0), TOL["axle"], 2.0, back=0.5, fdepth=1.0)
     log(f"  chassis holes ({time.time() - t0:.0f} s)")
     # ---- body: features, main shell (front zone + door panels + rear zone), tailgate, canopy, hood
     E, Cc, lenses = body_features(B, R, fe, re, z_hb, log)
@@ -879,7 +1020,8 @@ def build(res=6.0, mirrors="mirror", log=print):
     log(f"  boolean crumbs dropped (model mm3): {dropped or 'none'}")
     fix_joint_names()
     log(f"kit built in {time.time() - t0:.0f} s")
-    return G, W, wl, dict(z_hood=z_hb, carved=carved, crumbs=dropped, time=time.time() - t0)
+    return G, W, wl, dict(z_hood=z_hb, carved=carved, crumbs=dropped, time=time.time() - t0, res=res, mirrors=mirrors,
+                          clr=CLR, script=script_hash())
 
 
 def save_cache(path, G, W, wl, info):
@@ -887,6 +1029,7 @@ def save_cache(path, G, W, wl, info):
     pack = lambda m: mesh_arrays(m)
     data = dict(G={k: pack(m) for k, m in G.items()}, W={k: pack(m) for k, m in W.items()}, wl=pack(wl), info=info,
                 JOINTS=JOINTS, SCREWS=SCREWS, MAGNETS=MAGNETS)
+    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
     with open(path, "wb") as fh:
         pickle.dump(data, fh)
 
@@ -913,6 +1056,9 @@ def drop_shells(m):
     return K.union([c.translate([0, 0, -c.bounding_box()[2]]) for c in comps])
 
 
+DECK_SHIFT = 6.0          # model mm: the cargo deck sits 0.5 mm behind the cabin floor when installed
+
+
 def print_layout(key, G, W, wl):
     if key in ("rims", "tyres"):
         part = W["rim" if key == "rims" else "tyre"]
@@ -925,14 +1071,17 @@ def print_layout(key, G, W, wl):
         wb = bbox(w)
         w = w.translate([bb[0] - 4.0 - wb[3], -0.5*(wb[1] + wb[4]), -wb[2]])
         m = K.union([m.translate([0, 0, -bb[2]]), w])
-    if key == "floor_tub":
-        m = K.union([m, to_model(G["cargo_deck"])])
+    if key == "floor_tub":                                  # cargo deck behind the floor, 6 mm clear of it on the bed
+        deck = to_model(G["cargo_deck"])
+        zc = 0.5*(bbox(deck)[2] + bbox(deck)[5])
+        deck = deck.translate([0, 0, -zc]).rotate([180, 0, 0]).translate([DECK_SHIFT, 0, zc])   # top face down
+        m = K.union([m, deck])
     m = drop_shells(m)
     return m.translate([0, 0, -m.bounding_box()[2]])
 
 
 # ---------------------------------------------------------------------------
-# 10. export: STL (binary, model mm) and 3MF plates
+# 10. export: STL (binary, model mm) and 3MF projects
 # ---------------------------------------------------------------------------
 def mesh_arrays(m):
     mm = m.to_mesh()
@@ -965,7 +1114,9 @@ def clean_for_stl(m, expected):
         rep["dropped_pieces"] = len(comps) - expected
         rep["dropped_mm3"] = round(float(sum(abs(c.volume) for c in comps[expected:])), 3)
         tm = trimesh.util.concatenate(comps[:expected])
-    return np.asarray(tm.vertices), np.asarray(tm.faces, np.int64), rep
+    v = np.asarray(tm.vertices).copy()
+    v[v[:, 2] < 1e-3, 2] = 0.0                     # the bed plane exactly at z = 0 (pinch nudges leave ~1e-4)
+    return v, np.asarray(tm.faces, np.int64), rep
 
 
 def write_stl(v, f, path, name="solar_suv_1to20_model_kit"):
@@ -980,13 +1131,18 @@ def write_stl(v, f, path, name="solar_suv_1to20_model_kit"):
         fh.write(rec.tobytes())
 
 
-def plate_offsets(objects, gap=5.0):
-    """Build-item translations that lay the parts of one folder side by side along y (bed at z = 0)."""
-    out, y = [], 0.0
+def plate_offsets(objects, gap=5.0, width=250.0):
+    """Build-item translations: the parts of one folder shelf-packed into rows up to 250 mm wide (x),
+    rows stacked along y, every part on z = 0."""
+    out, x, y, row = [], 0.0, 0.0, 0.0
     for _name, v, _f in objects:
         lo, hi = v.min(0), v.max(0)
-        out.append((-lo[0], y - lo[1], -lo[2]))
-        y += hi[1] - lo[1] + gap
+        w, d = hi[0] - lo[0], hi[1] - lo[1]
+        if x > 0 and x + w > width:
+            x, y, row = 0.0, y + row + gap, 0.0
+        out.append((x - lo[0], y - lo[1], -lo[2]))
+        x += w + gap
+        row = max(row, d)
     return out
 
 
@@ -1021,7 +1177,7 @@ def write_3mf(path, objects):
 # 11. validation
 # ---------------------------------------------------------------------------
 def check_3mf(path, expected):
-    """Reload a 3MF plate: object names, millimetre unit, every object watertight."""
+    """Reload a 3MF: object count, millimetre unit, every object watertight."""
     import trimesh
     with zipfile.ZipFile(path) as z:
         xml = z.read("3D/3dmodel.model").decode()
@@ -1106,6 +1262,53 @@ def measure_joint(j, Gm, wheel_local):
     return round(float(Mx.distance(F)), 3)
 
 
+def plane_section(man, o, axis):
+    """Section of man (model mm) by the plane through o normal to axis, in plane coordinates
+    centred on o (a z plane is sliced directly; other planes after a rotation)."""
+    a = np.asarray(axis, float); a /= np.linalg.norm(a)
+    if abs(a[2]) > 0.999:
+        g = section_geom(man, float(o[2]))
+        from shapely import affinity
+        g = affinity.translate(g, -o[0], -o[1])
+        return g if a[2] > 0 else affinity.scale(g, 1.0, -1.0, origin=(0, 0))
+    return section_geom(man.transform(np.c_[np.eye(3), -np.asarray(o)]).transform(rot_to_z(a)), 0.0)
+
+
+def female_check(j, Gm):
+    """The female feature of a joint, checked at three depths from its mouth: the hole around the
+    joint axis must be a closed ring (also with a 0.4 mm wall: one extrusion width), at least
+    male_d + 2 x 0.25 mm across, and a blind pocket must have a floor.  None if not applicable."""
+    if j.get("fdepth") is None or j["male_d"] is None:
+        return None
+    fem = Gm[j["female"]]
+    a = np.asarray(j["axis"], float); a /= np.linalg.norm(a)
+    mouth = np.asarray(j["p"])/SCALE - a*j["back"]
+    win = Point(0, 0).buffer(4.0, resolution=64)
+    r_need = j["male_d"]/2 + CLR - 0.03                      # 0.03: facets of a 32-gon
+    out = dict(closed=True, wall_04=True, wide=True, floor=None, open_at=None)
+    for t in (0.15, j["fdepth"]/2, j["fdepth"] - 0.1):
+        F = plane_section(fem, mouth + a*t, a).intersection(win)
+        hole = win.difference(F)
+        comp = [g for g in getattr(hole, "geoms", [hole]) if g.distance(Point(0, 0)) < 1e-9]
+        closed = bool(comp) and comp[0].distance(win.exterior) > 1e-6
+        if not closed:
+            if out["closed"]:
+                out["closed"], out["open_at"] = False, round(t, 2)
+            continue
+        H = Polygon(comp[0].exterior)
+        if not H.buffer(1e-6).contains(Point(0, 0).buffer(r_need, resolution=32)):
+            out["wide"] = False
+        if t > 0.15:                                       # one extrusion width of material all round the hole
+            band = H.buffer(0.4, resolution=16).difference(H)
+            if band.difference(F).area > 0.02:
+                out["wall_04"] = False
+    if j.get("blind"):
+        r = j["male_d"]/2 + CLR
+        out["floor"] = any(plane_section(fem, mouth + a*t, a).contains(Point(0, 0))
+                           for t in np.linspace(j["fdepth"] + 0.05, j["fdepth"] + r + 1.0, 8))
+    return out
+
+
 def raster_layers(man, lo, px, shape, zs):
     import print_check as pc
     return [pc.raster(man, z, lo, px, shape) for z in zs]
@@ -1138,8 +1341,12 @@ def path_blockers(P, Q, d_remove=(0, 0, 1), px=0.15, dz=0.25):
             blocked |= b
         if bp[2] <= z <= bp[5]:
             seen |= pc.raster(Pr, z, lo2, px, shape)
-    area = float(ndimage_open(blocked).sum())*px*px
-    return round(area, 2), where
+    opened = ndimage_open(blocked)
+    area = float(opened.sum())*px*px
+    if area == 0:
+        return 0.0, None
+    ij = np.argwhere(opened)[0]
+    return round(area, 2), [round(float(lo2[0] + ij[0]*px), 2), round(float(lo2[1] + ij[1]*px), 2), where[2] if where else None]
 
 
 def ndimage_open(mask):
@@ -1179,8 +1386,11 @@ def validate(G, W, wl, out_files, log=print):
     paths = {}
     installed = [Gm["baseplate"]]
     for step, g, d in ASSEMBLY[1:]:
+        if g == "main":                      # the door cards are on the shell; the wheels are already on the axles
+            installed += [Gm["rims"], Gm["tyres"]]
         Q = K.union(installed)
-        area, where = path_blockers(Gm[g], Q, d)
+        P = K.union([Gm["main"], Gm["door_cards"]]) if g == "main" else Gm[g]
+        area, where = path_blockers(P, Q, d)
         paths[g] = dict(step=step, blocked_mm2=area, at=where)
         installed.append(Gm[g])
     card_area, card_at = 0.0, None
@@ -1198,7 +1408,7 @@ def validate(G, W, wl, out_files, log=print):
     lens.sort(key=lambda m: m.bounding_box()[0])
     a1, w1 = path_blockers(lens[0], Gm["main"], (-1, 0, 0))
     a2, w2 = path_blockers(lens[-1], Gm["tail"], (1, 0, 0))
-    paths["lenses"] = dict(step=14, blocked_mm2=max(a1, a2), at=w1 or w2, direction="into the lamp windows from outside")
+    paths["lenses"] = dict(step=12, blocked_mm2=max(a1, a2), at=w1 or w2, direction="into the lamp windows from outside")
     res["assembly_paths"] = paths
     log(f"  lowering paths checked for {len(paths)} parts")
     # ---- joint clearances
@@ -1212,7 +1422,11 @@ def validate(G, W, wl, out_files, log=print):
             gap, err = measure_joint(j, by_file, wl), None
         except Exception as e:                                # noqa: BLE001 - recorded in the manifest
             gap, err = None, f"{type(e).__name__}: {e}"
-        meas.append(dict(j, measured_gap_mm=gap, **({"error": err} if err else {})))
+        try:
+            fc = female_check(j, by_file)
+        except Exception as e:                                # noqa: BLE001
+            fc = dict(error=f"{type(e).__name__}: {e}")
+        meas.append(dict(j, measured_gap_mm=gap, female=j["female"], female_check=fc, **({"error": err} if err else {})))
     # tyre on rim and wheel bore, measured on the local wheel parts
     rim, tyre = W["rim"], W["tyre"]
     zmid = v4.WW/2
@@ -1224,6 +1438,11 @@ def validate(G, W, wl, out_files, log=print):
     res["joints"] = meas
     gaps = [m["measured_gap_mm"] for m in meas if m["measured_gap_mm"] is not None]
     log(f"  joints measured: {len(gaps)} of {len(meas)}, gap {min(gaps):.3f}-{max(gaps):.3f} mm")
+    bad = [m for m in meas if m.get("female_check") and not female_ok(m["female_check"])]
+    for m in bad:
+        log(f"  FEMALE FEATURE PROBLEM: {m['kind']} in {m['female']} at {[round(v) for v in m['p']]}: {m['female_check']}")
+    res["female_features_checked"] = sum(1 for m in meas if m.get("female_check"))
+    res["female_features_failed"] = len(bad)
     return res
 
 
@@ -1244,7 +1463,7 @@ SETTINGS = {   # file stem: (material, layer mm, walls, infill %, note)
     "rear_bench_seat": ("PLA", 0.12, 3, 15, ""),
     "dashboard_steering_console": ("PLA", 0.12, 3, 15, ""),
     "door_cards_set": ("PLA", 0.12, 2, 100, "4 cards"),
-    "removable_roof_solar_canopy": ("PLA", 0.12, 3, 15, "gyroid infill"),
+    "removable_roof_solar_canopy": ("PLA", 0.12, 3, 15, "a near-solid greenhouse block: use gyroid infill"),
     "hood_solar_bonnet": ("PLA", 0.12, 3, 15, ""),
     "main_outer_body_shell": ("PLA", 0.12, 3, 15, "240 mm long: needs a 250 mm bed"),
     "tailgate_rear_hatch": ("PLA", 0.12, 3, 15, ""),
@@ -1257,6 +1476,10 @@ LEDS = [("headlight channel behind the headlight lens strip (6 per side)", 12, "
         ("rear corner lamps in the roof canopy", 2, "0603 SMD LED, red, 1.6 x 0.8 x 0.6 mm, pre-wired"),
         ("driver cluster light box", 1, "0603 SMD LED, white, 1.6 x 0.8 x 0.6 mm, pre-wired"),
         ("centre touchscreen light box", 1, "0603 SMD LED, white, 1.6 x 0.8 x 0.6 mm, pre-wired")]
+
+
+def female_ok(fc):
+    return "error" not in fc and fc["closed"] and fc["wall_04"] and fc["wide"] and fc["floor"] is not False
 
 
 def support_verdict(sup):
@@ -1293,18 +1516,18 @@ def assembly_steps(screws):
         ("Harness", "Drop `hv_wiring_harness_conduits` (2 pieces) onto the baseplate: the rocker connectors sit in their sill pockets and the runs lie flat on the undertray. The two refrigerant risers of the front piece stand just ahead of the cabin floor line."),
         ("Subframes", "Lower `front_subframe_suspension` (cradle, front suspension and steering, bumper beam, crush cans and rails) and `rear_subframe_suspension` (cradle, rear suspension, rear rails with their kick-ups, lower struts, two cargo posts) onto the baseplate. The boss pads register in the pockets under the cradles; the harness runs pass through the crossmember notches. "
                       f"Fix the rear subframe with {fix('rear_sub')} button-head screws from above. Glue a magnet into each rear cargo post."),
-        ("E-axles", "Lower `front_e_axle_and_inverter` (with the cooling module, heat pump and charging stack) and `rear_e_axle_and_inverter` between the knuckles: two boss pads register each unit, and the pipe and cable risers land on the ends of the floor harness. Slide each 3 mm x 88.25 mm axle through knuckle, subframe, drive unit and knuckle."),
+        ("E-axles", "Lower `front_e_axle_and_inverter` (with the cooling module, heat pump and charging stack) and `rear_e_axle_and_inverter` between the knuckles: two boss pads register each unit, and the pipe and cable risers land on the ends of the floor harness. Slide each 3 mm x 88.25 mm axle through knuckle, subframe, drive unit and knuckle. Glue a magnet into the top of each of the two hood posts on the radiator shroud."),
         ("Battery", "Lower `battery_tray_lower_housing` between the sills and fix it to the baseplate bosses with "
                     f"{fix('tray')} button-head screws from above. Drop the 8 module pairs of `battery_module_cells_combined` into the bays between the cross-members."),
         ("Cabin floor", f"Set the cabin floor of `interior_floor_tub` on the battery: the two pegs on the battery front wall locate it and the refrigerant risers pass into the HVAC opening. Fix it with {fix('floor_tub')} button-head screws into the battery side frames in the rear footwells."),
-        ("Cargo deck", "Glue four magnets into the underside of the cargo deck (second piece of `interior_floor_tub`) and set it on its four posts over the rear e-axle."),
+        ("Cargo deck", "Glue four magnets into the bosses under the cargo deck (second piece of `interior_floor_tub`, printed upside down) and set it on its four posts over the rear e-axle."),
         ("Seats and dashboard", "Push `front_bucket_seats_pair`, `rear_bench_seat` and `dashboard_steering_console` onto their floor pegs (a drop of glue if wanted). Plug the steering wheel's 2 mm peg into the column socket."),
         ("Wheels", "Slide each tyre of `tires_treaded_x4` onto a rim of `wheels_rims_x4` from the inner face until it seats on the outer lip (glue if printed in PLA). Push the wheels onto the axle ends and fix with a drop of CA."),
         ("Door cards", "Press the four cards of `door_cards_set` onto the inside of the body shell's door panels (two pins each, from inside the shell)."),
         ("Body shell", "Thread the LED wires through the 3 mm channels and out of the 4 mm undertray exits. Lower `main_outer_body_shell` (the rear bumper beam, crush cans and upper struts are moulded inside its rear bumper) over the cabin onto the sill pins and screw it from below with "
-                       f"{fix('main')} button-head screws (bumper corners and sill ends)."),
+                       f"{fix('main')} button-head screws (bumper corners and rocker ends)."),
         ("Lenses", "Fit the two clear lenses of `clear_lens_headlights_taillights` into the headlight window (body shell) and the tail-bar window (tailgate) with a drop of clear UV glue."),
-        ("Hood, roof, tailgate", "Glue the magnets into their pockets (each pair facing with opposite poles). Set `hood_solar_bonnet` on its ledge (4 magnet pairs), then lower `removable_roof_solar_canopy` onto its four pins (A-pillar and C-pillar bases); its magnets meet the C-pillars. Finally slide `tailgate_rear_hatch` forward into the liftgate opening from behind until its hinge magnets meet the roof and its bottom magnets sit on the bumper ledge."),
+        ("Hood, roof, tailgate", "Glue the magnets into their pockets (each pair facing with opposite poles). Set `hood_solar_bonnet` on its ledge: 2 magnet pairs at the rear corners of the ledge and 2 on the radiator-shroud posts. then lower `removable_roof_solar_canopy` onto its four pins (A-pillar and C-pillar bases); its magnets meet the C-pillars. Finally slide `tailgate_rear_hatch` forward into the liftgate opening from behind until its hinge magnets meet the roof and its bottom magnets sit on the bumper ledge."),
     ]
 
 
@@ -1317,11 +1540,11 @@ FIT_NAMES = {  # (kind, male, female) -> (joint, male feature, female feature)
     ("peg", "dashboard_steering_console", "dashboard_steering_console"): ("Steering wheel", "Ø2.0 peg on the wheel hub", "Ø2.5 socket in the column"),
     ("boss", None, None): ("Module bosses", "Ø3.0 x 1.5 mm boss pad on the baseplate", "Ø3.5 pocket under the module"),
     ("magnet", None, None): ("Magnet pockets", "3 x 2 mm disc magnet", "Ø3.5 x 2.25 mm pocket"),
-    ("screw", None, None): ("Screw clearance holes", "M2 / M3 screw shank", "Ø2.5 / Ø3.5 clearance hole"),
+    ("screw", None, None): ("Screw clearance holes", "M2 screw shank (head Ø3.5)", "Ø2.5 clearance hole (Ø4.0 head counterbore)"),
     ("axle", None, None): ("Axle bores", "Ø3.0 steel or carbon rod", "Ø3.5 bore"),
     ("axle_in_hub", None, None): ("Wheel hub", "Ø3.0 axle", "Ø3.5 hub bore"),
     ("tyre_on_rim", None, None): ("Tyre on rim", "rim seat", "tyre bead (0.25 mm larger)"),
-    ("lens", None, None): ("Clear lenses", "lens strip", "lamp window (0.25 mm larger all round)"),
+    ("lens", None, None): ("Clear lenses", "lens strip (LED groove on the back)", "lamp window (0.25 mm larger all round)"),
 }
 
 
@@ -1332,12 +1555,22 @@ def fit_name(j):
     return (j["kind"], "-", "-")
 
 
-def write_guide(out, rows, val, screws, mags, args, info, plates_3mf):
+def write_guide(out, rows, val, screws, mags, args, info, plates_3mf, problems):
     L = []
     w = L.append
     w("# Solar SUV v4: 1:20 modular model kit, assembly and print guide\n")
-    w(f"This kit was generated by `generate_model_kit.py --res {args.res:g}` ({info['time']/60:.0f} min build). It has 20 STL files "
-      f"in 5 folders plus one 3MF plate per folder. Every file was reloaded from disk and checked (section 8).\n")
+    checked = not val.get("skipped")
+    w(f"This kit was generated by `generate_model_kit.py --res {info.get('res', args.res):g}` ({info['time']/60:.0f} min build). "
+      f"It has 20 STL files in 5 folders" + ("" if args.no_3mf else ", plus one 3MF per folder") + ". "
+      + ("Every file was reloaded from disk and checked (section 8). " if checked else
+         "**The support, joint, interference and assembly checks were skipped (`--skip-checks`).** ")
+      + "The solids and booleans use the manifold3d kernel, and the meshes are checked with trimesh. CadQuery and SolidPython "
+        "are not needed.\n")
+    if problems:
+        w("**Problems found by the checks:**\n")
+        for p_ in problems:
+            w(f"- {p_}")
+        w("")
     w("## 1. Files\n")
     w("```")
     w("solar_suv_1to20_model_kit/")
@@ -1351,7 +1584,7 @@ def write_guide(out, rows, val, screws, mags, args, info, plates_3mf):
         w(f"│   {'└──' if last else '├──'} {fo}/")
         items = [r for r in rows if r["folder"] == fo]
         names = [f"{r['stem']}.stl ({r['mesh']['shells']} piece{'s' if r['mesh']['shells'] > 1 else ''}, {r['mesh']['mb']:.1f} MB)" for r in items]
-        names += [f"{fo}_plate.3mf (all {len(items)} parts of the folder)"] if not args.no_3mf else []
+        names += [f"{fo}_parts.3mf (all {len(items)} parts of the folder)"] if not args.no_3mf else []
         for k, nme in enumerate(names):
             w(f"│   {'    ' if last else '│   '}{'└──' if k == len(names) - 1 else '├──'} {nme}")
     w("├── ASSEMBLY_AND_PRINT_GUIDE.md")
@@ -1362,64 +1595,93 @@ def write_guide(out, rows, val, screws, mags, args, info, plates_3mf):
     w("- Every STL lies with its print face **flat at z = 0**: the chassis baseplate on its undertray, the cabin floor tub on the "
       "floor plate, the roof canopy on its belt-line underside, the hood on its underside, the body shell and tailgate upright on "
       "their bottom edges.")
-    w("- Each part keeps its car x/y position divided by 20 (only the wheel and tyre plates are laid out 2 x 2). Import the files "
-      "together and raise each by `installed_z_offset_mm` from `kit_manifest.json` to see the assembled car.")
-    w("- The 3MF plates hold the same meshes, laid side by side, in millimetres.\n")
+    w("- Each part keeps its car x/y position divided by 20. The exceptions are the wheel and tyre plates (laid out 2 x 2), the "
+      "steering wheel (laid in front of the dashboard) and the cargo deck (6 mm behind the cabin floor, upside down). Import the "
+      "single-piece files together and raise each by `installed_z_offset_mm` from `kit_manifest.json` to see the assembled car.")
+    if not args.no_3mf:
+        w("- Each folder's 3MF holds the same meshes in millimetres, one object per file, laid out in rows up to 250 mm wide. It is "
+          "a project file, not a ready plate: some parts need different materials (TPU tyres, clear lenses) and the folders do not all "
+          "fit one bed. Split the parts onto plates in your slicer.")
+    w("")
     w("## 3. Fits and tolerances\n")
     w("Every male/female joint has **0.25 mm clearance per side**: the female feature is 0.5 mm larger in diameter than the male "
       "one, and 0.25 mm deeper. Where two parts touch, the clearance pass keeps them 0.25 mm apart. A part that is installed "
       "first gets open-top slots and recesses, and a part that goes on later gets notches that are open at the bottom, so every "
-      "part can be lowered straight into place. The clearances in the table were measured on the exported meshes. Each joint "
-      "was cut normal to its axis and the smallest gap between male and female was taken.\n")
-    w("| Joint | Male | Female | Count | Measured gap (mm) |")
-    w("|---|---|---|---|---|")
+      "part can be lowered straight into place. There are no snap-fits: parts are located by pins, pegs and boss pads, and "
+      "held by magnets and screws.\n")
+    w("Two checks were run on the final part geometry. These are the same meshes that are exported, before they are moved onto "
+      "the bed.")
+    w("- **Gap**: each joint was cut normal to its axis, and the smallest gap between male and female was measured.")
+    w("- **Female feature**: each hole or pocket was cut at three depths from its mouth: just inside it, at half depth and at "
+      "the bottom. At every depth it must be a closed ring, still closed with a 0.4 mm (one extrusion) wall, and at least "
+      "0.5 mm wider than its male part. Blind pockets must also have a floor.\n")
+    w("| Joint | Male | Female | Count | Measured gap (mm) | Female feature check |")
+    w("|---|---|---|---|---|---|")
     groups = {}
     for j in val["joints"]:
         name, male, fem = fit_name(j)
-        g = groups.setdefault(name, dict(male=male, fem=fem, gaps=[], missing=0))
+        g = groups.setdefault(name, dict(male=male, fem=fem, gaps=[], missing=0, fc_ok=0, fc_n=0))
         if j["measured_gap_mm"] is None:
             g["missing"] += 1
         else:
             g["gaps"].append(j["measured_gap_mm"])
+        if j.get("female_check"):
+            g["fc_n"] += 1
+            g["fc_ok"] += int(female_ok(j["female_check"]))
     for name, g in groups.items():
         rng = f"{min(g['gaps']):.3f} - {max(g['gaps']):.3f}" if g["gaps"] else "-"
         miss = f" ({g['missing']} not measurable)" if g["missing"] else ""
-        w(f"| {name} | {g['male']} | {g['fem']} | {len(g['gaps']) + g['missing']} | {rng}{miss} |")
+        fc = f"{g['fc_ok']}/{g['fc_n']} pass" if g["fc_n"] else "n/a (fit along the whole part)"
+        w(f"| {name} | {g['male']} | {g['fem']} | {len(g['gaps']) + g['missing']} | {rng}{miss} | {fc} |")
     w("")
-    w("Gaps a little under 0.25 mm come from the faceting of round holes. Screw pilots (Ø1.6 mm for M2, Ø2.5 mm for M3) are "
-      "deliberately undersized for self-tapping.\n")
+    gaps = [j["measured_gap_mm"] for j in val["joints"] if j["measured_gap_mm"] is not None]
+    if not checked:
+        w("Not measured in this run (`--skip-checks`).\n")
+    elif gaps and min(gaps) >= CLR - 0.02:
+        w(f"The smallest gap is {min(gaps):.3f} mm: gaps a little under 0.25 mm come from the faceting of round holes. The M2 screw "
+          "pilots (Ø1.6 mm) are deliberately undersized for self-tapping.\n")
+    else:
+        w(f"**PROBLEM: the smallest measured gap is {min(gaps) if gaps else 'n/a'} mm.**\n")
     w("## 4. Recommended print settings\n")
     w("FDM, 0.4 mm nozzle. Use **0.12 mm layers for the interior and body parts** and **0.20 mm for the chassis and powertrain**. "
-      "Turn bridge detection on. The *Supports* column comes from a layer-by-layer check (`tools/print_check.py`). A file needs "
-      "supports if it has a bridge over 12 mm, a cantilever over 2.4 mm or an unsupported island over 1 mm².\n")
+      "Turn bridge detection on. The *Supports* column comes from a layer-by-layer check (`tools/print_check.py`). A file is marked "
+      "as needing supports if it has a bridge over 12 mm, an overhang that reaches more than 2.4 mm past the 45° line, or an island over "
+      "1 mm². These limits are looser than print_check's strict default (0.8 mm), which flags any visible sag. Section 8 lists the "
+      "largest overhang and island in every file, so you can see where some sag may show. Use a 5 mm brim on tall parts that "
+      "stand on a narrow edge: the body shell, tailgate, door cards and lenses.\n")
     w("| File | Pieces | Size x, y, z (mm) | Material | Layer | Walls | Infill | Supports | Orientation / notes |")
     w("|---|---|---|---|---|---|---|---|---|")
     for r in rows:
         mat, lay, walls, inf, note = SETTINGS[r["stem"]]
         m = r["mesh"]
         w(f"| `{r['stem']}` | {m['shells']} | {' x '.join(f'{v:.1f}' for v in m['size_mm'])} | {mat} | {lay:.2f} mm | {walls} | "
-          f"{inf} % | {support_verdict(r.get('support'))} | {r['orient']}{'; ' + note if note else ''} |")
+          f"{inf} % | {support_verdict(r.get('support')) if checked else 'not checked'} | {r['orient']}{'; ' + note if note else ''} |")
     w("")
     w("## 5. Hardware\n")
     w("| Item | Qty | Where |")
     w("|---|---|---|")
     for (size, length), where in sorted(screws.items()):
-        w(f"| {size} x {length} mm button-head screw (ISO 7380), self-tapping into a printed pilot | {len(where)} | "
+        w(f"| {size} x {length} mm button-head screw (ISO 7380 style, head Ø3.5 x 1.3 mm), self-tapping into a printed Ø1.6 pilot | {len(where)} | "
           + "; ".join(sorted(set(x.split(' at ')[0] for x in where))) + " |")
     w(f"| 3 x 2 mm N52 neodymium disc magnet | {mags} | " + "; ".join(f"{m['where']} ({m['count']})" for m in MAGNETS) + " |")
     w("| 3 mm steel or carbon rod, 88.25 mm long | 2 | front and rear axles: knuckle, subframe, drive unit, knuckle |")
     for where, q, kind in LEDS:
         w(f"| {kind} | {q} | {where} |")
     w("| 0.1 mm enamelled copper wire | 2 m | LED feeds through the wire channels |")
-    w("| 100-150 ohm resistor | 1 per LED | outside the model, on a 3-5 V supply |")
+    w(f"| Resistor, 1 per LED, on a 5 V supply | {sum(q for _w, q, _k in LEDS)} | white LEDs 220-270 ohm, red LEDs 330-390 ohm (about 8 mA): R = (5 V - Vf) / I |")
     w("| CA glue, clear UV-curing glue | - | magnets, tyres (if PLA), lenses |")
     w("")
     w("## 6. LED lighting (optional)\n")
+    w("- **Lens strips**: each clear lens has a 0.8 x 0.5 mm groove along its back face. The groove sits in front of the LED channel, "
+      "so the light reaches the whole strip; lay the LED wire or a strip of 0603 LEDs in it.")
     w("- **Headlights**: a 4 mm channel runs behind the headlight lens strip in the body shell, with a 3 mm wire exit back along the centre line.")
     w("- **Tail bar**: a 4 mm channel runs behind the tail lens strip in the tailgate, with a 3 mm wire exit forward.")
-    w("- **Rear corner lamps**: these sit in the roof canopy, behind 1.0 mm windows. A 3 mm wire drop runs into a socket in the body shell.")
+    w("- **Rear corner lamps**: these sit in the roof canopy, behind 1.0 mm windows. A 3 mm wire drop runs through the canopy and on "
+      "down through the rear quarter of the body shell into the cargo area.")
     w("- **Cluster and centre display**: these are light boxes behind the windows of the dashboard pod.")
-    w("- **Wire exits**: three Ø4 mm holes through the undertray (front corners and rear centre) lead the wires out under the model.")
+    w("- **Wire exits**: two Ø4 mm holes through the undertray just ahead of the battery (baseplate x = 65 mm, y = ±21 mm) take "
+      "the headlight and dashboard wires out under the model. Lead the tail-bar and corner-lamp wires down the inside of the rear "
+      "quarters and out through the rear wheel houses, which are open on the inboard side.")
     w("- **Wire size**: 0603 SMD LEDs (1.6 x 0.8 x 0.6 mm) with 0.1 mm enamelled wire pass every channel. Round 1.8 mm LEDs fit the 4 mm channels.\n")
     w("## 7. Assembly sequence\n")
     for i, (title, text) in enumerate(assembly_steps(screws), start=1):
@@ -1431,9 +1693,12 @@ def write_guide(out, rows, val, screws, mags, args, info, plates_3mf):
     w("- Body shell off (screws from below): the whole interior and chassis.")
     w("- Cabin floor out (2 screws): the battery, motors and harness.\n")
     w("## 8. Verification\n")
-    w("Each STL was reloaded from disk and checked. Every file is watertight and has only 2-manifold edges (each edge shared by "
-      "exactly 2 faces). Each file has the expected number of pieces, its lowest point at z = 0 and a flat bed face. Its size "
-      "matches the full-size geometry divided by 20.\n")
+    meshes_ok = all(r["mesh"]["watertight"] and r["mesh"]["edges_2_manifold"] and r["mesh"]["shells"] == r["mesh"]["shells_expected"]
+                    and abs(r["mesh"]["bed_z"]) <= 1e-6 and r["mesh"]["bed_contact_mm2"] > 0 for r in rows)
+    scale_ok = all(r["scale"].startswith("ok") for r in rows)
+    w("Each STL was reloaded from disk and checked: watertight, every edge shared by exactly 2 faces, the expected number of "
+      "pieces, the lowest point at z = 0 with a flat bed face, and the size against the full-size geometry divided by 20. "
+      + ("Every file passes." if meshes_ok and scale_ok else "**Some files fail: see the table and the problem list at the top.**") + "\n")
     w("| File | Triangles | Watertight | 2-manifold | Pieces (expected) | Bed z | Bed contact | Scale check | Max bridge | Max cantilever | Islands (largest) |")
     w("|---|---|---|---|---|---|---|---|---|---|---|")
     for r in rows:
@@ -1442,19 +1707,27 @@ def write_guide(out, rows, val, screws, mags, args, info, plates_3mf):
           f"{m['shells']} ({m['shells_expected']}) | {m['bed_z']:.3f} | {m['bed_contact_mm2']:,.0f} mm² | {r['scale']} | "
           f"{sp.get('max_bridge_mm', '-')} mm | {sp.get('max_cantilever_mm', '-')} mm | {sp.get('islands', '-')} ({sp.get('max_island_mm2', '-')} mm²) |")
     w("")
-    w("Islands are tiny layer regions that start in the air, such as the tip of a downward-pointing feature. All are under "
-      "1 mm². That is small enough to print without supports, but expect a little sag at those spots.\n")
+    if checked:
+        isl = max((r.get("support") or {}).get("max_island_mm2", 0.0) for r in rows)
+        w("Islands are tiny layer regions that start in the air, such as the tip of a downward-pointing feature. "
+          + (f"The largest is {isl} mm². That is small enough to print without supports, but expect a little sag at those spots."
+             if isl <= 1.0 else f"**The largest is {isl} mm²: add supports there.**") + "\n")
     if plates_3mf:
         ok = all(p["unit_mm"] and p["all_watertight"] and p["objects"] == p["expected"] for p in plates_3mf.values())
-        w(f"**3MF plates**: {len(plates_3mf)} reloaded. " + ("Each has every part as a separate watertight object, in millimetres."
+        w(f"**3MF files**: {len(plates_3mf)} reloaded. " + ("Each has every part as a separate watertight object, in millimetres."
                                                              if ok else "PROBLEM: " + json.dumps(plates_3mf)) + "\n")
-    inter = val["interference_mm3"]
-    w("**Interference**: every pair of installed parts was intersected. "
-      + ("No pair overlaps by more than 0.005 mm³." if not inter else "Overlaps: " + ", ".join(f"{k} {v} mm³" for k, v in inter.items()) + ".") + "\n")
-    blocked = {k: v for k, v in val["assembly_paths"].items() if v["blocked_mm2"] > 0}
-    w("**Assembly paths**: in assembly order, each part was moved along its insertion direction against everything installed "
-      "before it. The insertion is straight down, except the door cards (outward onto their pins) and the tailgate (forward). "
-      + ("Nothing blocks any part." if not blocked else "Blocked: " + ", ".join(f"{k} {v['blocked_mm2']} mm² at {v['at']}" for k, v in blocked.items())) + "\n")
+    if not checked:
+        w("**Interference, assembly paths and joints**: not checked in this run (`--skip-checks`).\n")
+    else:
+        inter = val["interference_mm3"]
+        w("**Interference**: every pair of installed parts was intersected. "
+          + ("No pair overlaps by more than 0.005 mm³." if not inter else "**Overlaps: " + ", ".join(f"{k} {v} mm³" for k, v in inter.items()) + ".**") + "\n")
+        blocked = {k: v for k, v in val["assembly_paths"].items() if v["blocked_mm2"] > 0}
+        w("**Assembly paths**: in assembly order, each part was moved along its insertion direction against everything installed "
+          "before it. The insertion is straight down, except the door cards (outward onto their pins) and the tailgate (forward). "
+          "The body shell was checked with the door cards fitted and the wheels on. "
+          + ("Nothing blocks any part." if not blocked else "**Blocked: " + ", ".join(f"{k} {v['blocked_mm2']} mm² at {v['at']}" for k, v in blocked.items()) + "**") + "\n")
+        w(f"**Problems**: " + ("none." if not problems else f"{len(problems)}, listed at the top of this guide.") + "\n")
     with open(os.path.join(out, "ASSEMBLY_AND_PRINT_GUIDE.md"), "w") as fh:
         fh.write("\n".join(L) + "\n")
 
@@ -1477,10 +1750,12 @@ def scale_check(key, size, G, W):
     else:
         g = G[key]
     ref = (bbox(g)[3:] - bbox(g)[:3])/SCALE
+    if key == "floor_tub":
+        ref[0] += DECK_SHIFT
     n = 3 if key not in ("lenses", "floor_tub", "dashboard") else 2
     if key == "dashboard":                                    # steering wheel laid in front: compare y and z
-        err = float(np.max(np.abs(size[1:] - np.maximum(ref[1:], [0, 0]))))
-        return f"ok (1:20, ±{err:.3f} mm)" if size[1] >= ref[1] - 0.05 else f"OFF by {err:.2f} mm"
+        err = float(np.max(np.abs(size[1:] - ref[1:])))
+        return f"ok (1:20, ±{err:.3f} mm)" if err < 0.05 else f"OFF by {err:.2f} mm"
     err = float(np.max(np.abs(size[:n] - ref[:n])))
     return f"ok (1:20, ±{err:.3f} mm)" if err < 0.05 else f"OFF by {err:.2f} mm"
 
@@ -1488,6 +1763,51 @@ def scale_check(key, size, G, W):
 # ---------------------------------------------------------------------------
 # 13. main
 # ---------------------------------------------------------------------------
+def script_hash():
+    import hashlib
+    with open(os.path.abspath(__file__), "rb") as fh:
+        return hashlib.sha1(fh.read()).hexdigest()[:12]
+
+
+def check_summary(rows, val, plates_3mf, args):
+    """Every failed check, as text (empty when the kit is good)."""
+    out = []
+    for r in rows:
+        m, e = r["mesh"], r["export"]
+        if not (m["watertight"] and m["edges_2_manifold"]):
+            out.append(f"{r['stem']}: not watertight / 2-manifold")
+        if m["shells"] != m["shells_expected"]:
+            out.append(f"{r['stem']}: {m['shells']} pieces, expected {m['shells_expected']}")
+        if abs(m["bed_z"]) > 1e-6 or m["bed_contact_mm2"] <= 0:
+            out.append(f"{r['stem']}: no flat bed face at z = 0")
+        if e["dropped_mm3"] >= 0.5:
+            out.append(f"{r['stem']}: {e['dropped_pieces']} extra pieces ({e['dropped_mm3']} mm3) dropped on export")
+        if not r["scale"].startswith("ok"):
+            out.append(f"{r['stem']}: scale check {r['scale']}")
+        if not args.skip_checks and support_verdict(r.get("support")) != "none":
+            out.append(f"{r['stem']}: supports needed ({support_verdict(r.get('support'))})")
+    for f, p_ in (plates_3mf or {}).items():
+        if not (p_["unit_mm"] and p_["all_watertight"] and p_["objects"] == p_["expected"]):
+            out.append(f"{f}_parts.3mf: {p_}")
+    if val.get("skipped"):
+        return out
+    for k, v in val["interference_mm3"].items():
+        out.append(f"interference {k}: {v} mm3")
+    for k, v in val["assembly_paths"].items():
+        if v["blocked_mm2"] > 0:
+            out.append(f"assembly path of {k} blocked: {v['blocked_mm2']} mm2 at {v['at']}")
+    for j in val["joints"]:
+        g = j["measured_gap_mm"]
+        where = f"{j['kind']} {j.get('male')} / {j['female']} at {[round(c) for c in j['p']]}"
+        if g is None:
+            out.append(f"joint not measurable: {where}: {j.get('error')}")
+        elif g < CLR - 0.02:
+            out.append(f"joint gap {g} mm < {CLR}: {where}")
+        if j.get("female_check") and not female_ok(j["female_check"]):
+            out.append(f"female feature: {where}: {j['female_check']}")
+    return out
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description="Solar SUV v4 1:20 modular model kit pipeline")
     ap.add_argument("--out", default=os.path.join(HERE, "solar_suv_1to20_model_kit"))
@@ -1502,12 +1822,20 @@ def main(argv=None):
     if args.cache and os.path.exists(args.cache):
         apply_tolerances()
         G, W, wl, info = load_cache(args.cache)
-        log(f"parts loaded from {args.cache}")
+        same = (info.get("res"), info.get("mirrors"), info.get("clr"), info.get("script")) == (args.res, args.mirrors, CLR, script_hash())
+        log(f"parts loaded from {args.cache}" + ("" if same else
+            f" - WARNING: built with res {info.get('res')}, mirrors {info.get('mirrors')}, an older script or other tolerances; "
+            "the guide and manifest report the cached settings"))
     else:
         G, W, wl, info = build(args.res, args.mirrors, log)
         if args.cache:
             save_cache(args.cache, G, W, wl, info)
     import print_check as pc
+    stl_dir = os.path.join(args.out, "stls")
+    for root, _dirs, files in os.walk(stl_dir):                  # no stale files from an earlier run
+        for fn in files:
+            if fn.endswith((".stl", ".3mf")):
+                os.remove(os.path.join(root, fn))
     rows = []
     plates = {}
     for folder, stem, key, n_exp, orient in PARTS:
@@ -1534,27 +1862,27 @@ def main(argv=None):
     plates_3mf = {}
     if not args.no_3mf:
         for folder, objs in plates.items():
-            path = os.path.join(args.out, "stls", folder, f"{folder}_plate.3mf")
+            path = os.path.join(args.out, "stls", folder, f"{folder}_parts.3mf")
             write_3mf(path, objs)
             plates_3mf[folder] = check_3mf(path, len(objs))
-            log(f"  {folder}_plate.3mf: {plates_3mf[folder]}")
+            log(f"  {folder}_parts.3mf: {plates_3mf[folder]}")
     log(f"  export and print checks done ({(time.time() - t0)/60:.1f} min)")
-    val = validate(G, W, wl, rows, log) if not args.skip_checks else dict(joints=[], interference_mm3={}, assembly_paths={})
+    val = validate(G, W, wl, rows, log) if not args.skip_checks else dict(skipped=True, joints=[], interference_mm3={}, assembly_paths={})
     log(f"  validation done ({(time.time() - t0)/60:.1f} min)")
     screws, mags = bom()
-    write_guide(args.out, rows, val, screws, mags, args, info, plates_3mf)
-    manifest = dict(generator="generate_model_kit.py", res=args.res, units="model mm (1:20)", clearance_per_side_mm=CLR,
+    problems = check_summary(rows, val, plates_3mf, args)
+    write_guide(args.out, rows, val, screws, mags, args, info, plates_3mf, problems)
+    manifest = dict(generator="generate_model_kit.py", script_sha1=script_hash(), res=info.get("res", args.res),
+                    mirrors=info.get("mirrors", args.mirrors), units="model mm (1:20)", clearance_per_side_mm=CLR, problems=problems,
                     tolerances=TOL, parts=rows, plates_3mf=plates_3mf, clearance_pass=info["carved"], validation=val,
                     screws=SCREWS, magnets=MAGNETS, leds=LEDS, optional_toolchains=OPTIONAL_FOUND if __name__ == "__main__" else {},
                     build_minutes=round((time.time() - t0)/60, 1))
     json.dump(manifest, open(os.path.join(args.out, "kit_manifest.json"), "w"), indent=1, default=float)
-    ok = all(r["mesh"]["watertight"] and r["mesh"]["edges_2_manifold"] and r["mesh"]["shells"] == r["mesh"]["shells_expected"]
-             and abs(r["mesh"]["bed_z"]) < 1e-3 and r["export"]["dropped_mm3"] < 0.5 for r in rows)
-    for r in rows:
-        if r["export"]["dropped_mm3"] >= 0.5:
-            log(f"  WARNING {r['stem']}: {r['export']['dropped_pieces']} extra pieces ({r['export']['dropped_mm3']} mm3) were dropped")
-    log(f"done in {(time.time() - t0)/60:.1f} min: {len(rows)} files, all watertight/manifold/expected pieces/bed at z=0/nothing dropped: {ok}")
-    return 0 if ok else 1
+    for p_ in problems:
+        log(f"  PROBLEM: {p_}")
+    log(f"done in {(time.time() - t0)/60:.1f} min: {len(rows)} files, "
+        + ("every check passed" if not problems else f"{len(problems)} problems") + (" (checks skipped)" if args.skip_checks else ""))
+    return 0 if not problems else 1
 
 
 if __name__ == "__main__":

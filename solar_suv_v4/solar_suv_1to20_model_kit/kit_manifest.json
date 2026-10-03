@@ -1,0 +1,3866 @@
+{
+ "generator": "generate_model_kit.py",
+ "script_sha1": "2255538da32f",
+ "res": 6.0,
+ "mirrors": "mirror",
+ "units": "model mm (1:20)",
+ "clearance_per_side_mm": 0.25,
+ "problems": [],
+ "tolerances": {
+  "clearance_per_side": 0.25,
+  "magnet": [
+   3.0,
+   2.0
+  ],
+  "magnet_pocket": [
+   3.5,
+   2.25
+  ],
+  "pin": 1.5,
+  "pin_socket": 2.0,
+  "peg": 2.0,
+  "peg_socket": 2.5,
+  "axle": 3.0,
+  "axle_bore": 3.5,
+  "m2_pilot": 1.6,
+  "m2_clear": 2.5,
+  "m2_head": 4.0,
+  "m3_pilot": 2.5,
+  "m3_clear": 3.5,
+  "m3_head": 6.2,
+  "m2_head_h": 1.3,
+  "panel_gap": 0.5
+ },
+ "parts": [
+  {
+   "folder": "01_chassis",
+   "stem": "chassis_baseplate_m2_bosses",
+   "key": "baseplate",
+   "orient": "flat underside on the bed",
+   "mesh": {
+    "triangles": 100210,
+    "watertight": true,
+    "edges_2_manifold": true,
+    "winding_consistent": true,
+    "shells": 1,
+    "shells_expected": 1,
+    "volume_cm3": 34.68,
+    "size_mm": [
+     225.21,
+     98.2,
+     24.0
+    ],
+    "bed_z": 0.0,
+    "bed_contact_mm2": 17225.2,
+    "min_shell_bed_contact_mm2": 17225.2,
+    "mb": 4.78
+   },
+   "export": {
+    "pinches_separated": 14,
+    "slivers_dropped": 0,
+    "repaired_faces": 0,
+    "dropped_pieces": 0,
+    "dropped_mm3": 0.0
+   },
+   "scale": "ok (1:20, \u00b10.002 mm)",
+   "path": "stls/01_chassis/chassis_baseplate_m2_bosses.stl",
+   "installed_z_offset_mm": -0.0,
+   "support": {
+    "bridges": 13,
+    "bridge_area_mm2": 4.8,
+    "max_bridge_mm": 3.42,
+    "long_bridges": 0,
+    "cantilevers": 8,
+    "max_cantilever_mm": 1.46,
+    "islands": 4,
+    "max_island_mm2": 0.03
+   }
+  },
+  {
+   "folder": "01_chassis",
+   "stem": "front_subframe_suspension",
+   "key": "front_sub",
+   "orient": "subframe bars on the bed",
+   "mesh": {
+    "triangles": 10846,
+    "watertight": true,
+    "edges_2_manifold": true,
+    "winding_consistent": true,
+    "shells": 1,
+    "shells_expected": 1,
+    "volume_cm3": 13.54,
+    "size_mm": [
+     63.5,
+     78.0,
+     34.85
+    ],
+    "bed_z": 0.0,
+    "bed_contact_mm2": 1099.8,
+    "min_shell_bed_contact_mm2": 1099.8,
+    "mb": 0.52
+   },
+   "export": {
+    "pinches_separated": 0,
+    "slivers_dropped": 0,
+    "repaired_faces": 0,
+    "dropped_pieces": 0,
+    "dropped_mm3": 0.0
+   },
+   "scale": "ok (1:20, \u00b10.000 mm)",
+   "path": "stls/01_chassis/front_subframe_suspension.stl",
+   "installed_z_offset_mm": 1.2,
+   "support": {
+    "bridges": 31,
+    "bridge_area_mm2": 520.0,
+    "max_bridge_mm": 10.65,
+    "long_bridges": 0,
+    "cantilevers": 0,
+    "max_cantilever_mm": 0.0,
+    "islands": 2,
+    "max_island_mm2": 0.41
+   }
+  },
+  {
+   "folder": "01_chassis",
+   "stem": "rear_subframe_suspension",
+   "key": "rear_sub",
+   "orient": "subframe bars on the bed",
+   "mesh": {
+    "triangles": 13110,
+    "watertight": true,
+    "edges_2_manifold": true,
+    "winding_consistent": true,
+    "shells": 1,
+    "shells_expected": 1,
+    "volume_cm3": 9.04,
+    "size_mm": [
+     60.5,
+     69.0,
+     28.6
+    ],
+    "bed_z": 0.0,
+    "bed_contact_mm2": 1217.0,
+    "min_shell_bed_contact_mm2": 1217.0,
+    "mb": 0.63
+   },
+   "export": {
+    "pinches_separated": 6,
+    "slivers_dropped": 0,
+    "repaired_faces": 0,
+    "dropped_pieces": 0,
+    "dropped_mm3": 0.0
+   },
+   "scale": "ok (1:20, \u00b10.000 mm)",
+   "path": "stls/01_chassis/rear_subframe_suspension.stl",
+   "installed_z_offset_mm": 1.2,
+   "support": {
+    "bridges": 20,
+    "bridge_area_mm2": 115.4,
+    "max_bridge_mm": 9.77,
+    "long_bridges": 0,
+    "cantilevers": 2,
+    "max_cantilever_mm": 1.05,
+    "islands": 0,
+    "max_island_mm2": 0.0
+   }
+  },
+  {
+   "folder": "02_powertrain",
+   "stem": "battery_tray_lower_housing",
+   "key": "tray",
+   "orient": "tray floor on the bed",
+   "mesh": {
+    "triangles": 5736,
+    "watertight": true,
+    "edges_2_manifold": true,
+    "winding_consistent": true,
+    "shells": 1,
+    "shells_expected": 1,
+    "volume_cm3": 17.54,
+    "size_mm": [
+     99.0,
+     80.5,
+     9.3
+    ],
+    "bed_z": 0.0,
+    "bed_contact_mm2": 7720.8,
+    "min_shell_bed_contact_mm2": 7720.8,
+    "mb": 0.27
+   },
+   "export": {
+    "pinches_separated": 2,
+    "slivers_dropped": 0,
+    "repaired_faces": 0,
+    "dropped_pieces": 0,
+    "dropped_mm3": 0.0
+   },
+   "scale": "ok (1:20, \u00b10.000 mm)",
+   "path": "stls/02_powertrain/battery_tray_lower_housing.stl",
+   "installed_z_offset_mm": 1.2,
+   "support": {
+    "bridges": 0,
+    "bridge_area_mm2": 0,
+    "max_bridge_mm": 0.0,
+    "long_bridges": 0,
+    "cantilevers": 0,
+    "max_cantilever_mm": 0.0,
+    "islands": 0,
+    "max_island_mm2": 0.0
+   }
+  },
+  {
+   "folder": "02_powertrain",
+   "stem": "battery_module_cells_combined",
+   "key": "modules",
+   "orient": "8 module pairs, cell bases on the bed",
+   "mesh": {
+    "triangles": 40962,
+    "watertight": true,
+    "edges_2_manifold": true,
+    "winding_consistent": true,
+    "shells": 8,
+    "shells_expected": 8,
+    "volume_cm3": 26.33,
+    "size_mm": [
+     88.34,
+     72.4,
+     6.41
+    ],
+    "bed_z": 0.0,
+    "bed_contact_mm2": 4820.0,
+    "min_shell_bed_contact_mm2": 601.7,
+    "mb": 1.95
+   },
+   "export": {
+    "pinches_separated": 2,
+    "slivers_dropped": 0,
+    "repaired_faces": 0,
+    "dropped_pieces": 0,
+    "dropped_mm3": 0.0
+   },
+   "scale": "ok (1:20, \u00b10.003 mm)",
+   "path": "stls/02_powertrain/battery_module_cells_combined.stl",
+   "installed_z_offset_mm": 2.05,
+   "support": {
+    "bridges": 170,
+    "bridge_area_mm2": 795.1,
+    "max_bridge_mm": 3.31,
+    "long_bridges": 0,
+    "cantilevers": 12,
+    "max_cantilever_mm": 1.23,
+    "islands": 2,
+    "max_island_mm2": 0.43
+   }
+  },
+  {
+   "folder": "02_powertrain",
+   "stem": "front_e_axle_and_inverter",
+   "key": "eaxle_front",
+   "orient": "standing on its feet as installed",
+   "mesh": {
+    "triangles": 12488,
+    "watertight": true,
+    "edges_2_manifold": true,
+    "winding_consistent": true,
+    "shells": 1,
+    "shells_expected": 1,
+    "volume_cm3": 19.56,
+    "size_mm": [
+     37.85,
+     44.0,
+     35.45
+    ],
+    "bed_z": 0.0,
+    "bed_contact_mm2": 631.1,
+    "min_shell_bed_contact_mm2": 631.1,
+    "mb": 0.6
+   },
+   "export": {
+    "pinches_separated": 0,
+    "slivers_dropped": 0,
+    "repaired_faces": 0,
+    "dropped_pieces": 0,
+    "dropped_mm3": 0.0
+   },
+   "scale": "ok (1:20, \u00b10.000 mm)",
+   "path": "stls/02_powertrain/front_e_axle_and_inverter.stl",
+   "installed_z_offset_mm": 1.2,
+   "support": {
+    "bridges": 27,
+    "bridge_area_mm2": 152.2,
+    "max_bridge_mm": 11.81,
+    "long_bridges": 0,
+    "cantilevers": 0,
+    "max_cantilever_mm": 0.0,
+    "islands": 0,
+    "max_island_mm2": 0.0
+   }
+  },
+  {
+   "folder": "02_powertrain",
+   "stem": "rear_e_axle_and_inverter",
+   "key": "eaxle_rear",
+   "orient": "standing on its feet as installed",
+   "mesh": {
+    "triangles": 5094,
+    "watertight": true,
+    "edges_2_manifold": true,
+    "winding_consistent": true,
+    "shells": 1,
+    "shells_expected": 1,
+    "volume_cm3": 8.75,
+    "size_mm": [
+     28.05,
+     27.5,
+     24.8
+    ],
+    "bed_z": 0.0,
+    "bed_contact_mm2": 338.3,
+    "min_shell_bed_contact_mm2": 338.3,
+    "mb": 0.24
+   },
+   "export": {
+    "pinches_separated": 0,
+    "slivers_dropped": 0,
+    "repaired_faces": 0,
+    "dropped_pieces": 0,
+    "dropped_mm3": 0.0
+   },
+   "scale": "ok (1:20, \u00b10.000 mm)",
+   "path": "stls/02_powertrain/rear_e_axle_and_inverter.stl",
+   "installed_z_offset_mm": 1.2,
+   "support": {
+    "bridges": 6,
+    "bridge_area_mm2": 9.0,
+    "max_bridge_mm": 10.6,
+    "long_bridges": 0,
+    "cantilevers": 0,
+    "max_cantilever_mm": 0.0,
+    "islands": 0,
+    "max_island_mm2": 0.0
+   }
+  },
+  {
+   "folder": "02_powertrain",
+   "stem": "hv_wiring_harness_conduits",
+   "key": "harness",
+   "orient": "front and rear harness, carrier straps on the bed",
+   "mesh": {
+    "triangles": 5522,
+    "watertight": true,
+    "edges_2_manifold": true,
+    "winding_consistent": true,
+    "shells": 2,
+    "shells_expected": 2,
+    "volume_cm3": 0.58,
+    "size_mm": [
+     133.12,
+     90.6,
+     13.3
+    ],
+    "bed_z": 0.0,
+    "bed_contact_mm2": 245.6,
+    "min_shell_bed_contact_mm2": 53.5,
+    "mb": 0.26
+   },
+   "export": {
+    "pinches_separated": 0,
+    "slivers_dropped": 0,
+    "repaired_faces": 0,
+    "dropped_pieces": 0,
+    "dropped_mm3": 0.0
+   },
+   "scale": "ok (1:20, \u00b10.001 mm)",
+   "path": "stls/02_powertrain/hv_wiring_harness_conduits.stl",
+   "installed_z_offset_mm": 1.2,
+   "support": {
+    "bridges": 0,
+    "bridge_area_mm2": 0,
+    "max_bridge_mm": 0.0,
+    "long_bridges": 0,
+    "cantilevers": 0,
+    "max_cantilever_mm": 0.0,
+    "islands": 0,
+    "max_island_mm2": 0.0
+   }
+  },
+  {
+   "folder": "03_interior",
+   "stem": "interior_floor_tub",
+   "key": "floor_tub",
+   "orient": "cabin floor flat on the bed; cargo deck upside down beside it",
+   "mesh": {
+    "triangles": 10524,
+    "watertight": true,
+    "edges_2_manifold": true,
+    "winding_consistent": true,
+    "shells": 2,
+    "shells_expected": 2,
+    "volume_cm3": 17.82,
+    "size_mm": [
+     167.0,
+     86.34,
+     35.65
+    ],
+    "bed_z": 0.0,
+    "bed_contact_mm2": 10147.4,
+    "min_shell_bed_contact_mm2": 2315.4,
+    "mb": 0.5
+   },
+   "export": {
+    "pinches_separated": 8,
+    "slivers_dropped": 0,
+    "repaired_faces": 0,
+    "dropped_pieces": 0,
+    "dropped_mm3": 0.0
+   },
+   "scale": "ok (1:20, \u00b10.001 mm)",
+   "path": "stls/03_interior/interior_floor_tub.stl",
+   "support": {
+    "bridges": 5,
+    "bridge_area_mm2": 54.4,
+    "max_bridge_mm": 6.2,
+    "long_bridges": 0,
+    "cantilevers": 0,
+    "max_cantilever_mm": 0.0,
+    "islands": 0,
+    "max_island_mm2": 0.0
+   }
+  },
+  {
+   "folder": "03_interior",
+   "stem": "front_bucket_seats_pair",
+   "key": "seats",
+   "orient": "seat bases on the bed",
+   "mesh": {
+    "triangles": 1552,
+    "watertight": true,
+    "edges_2_manifold": true,
+    "winding_consistent": true,
+    "shells": 2,
+    "shells_expected": 2,
+    "volume_cm3": 30.76,
+    "size_mm": [
+     48.01,
+     65.5,
+     54.3
+    ],
+    "bed_z": 0.0,
+    "bed_contact_mm2": 1432.8,
+    "min_shell_bed_contact_mm2": 716.4,
+    "mb": 0.07
+   },
+   "export": {
+    "pinches_separated": 0,
+    "slivers_dropped": 0,
+    "repaired_faces": 0,
+    "dropped_pieces": 0,
+    "dropped_mm3": 0.0
+   },
+   "scale": "ok (1:20, \u00b10.003 mm)",
+   "path": "stls/03_interior/front_bucket_seats_pair.stl",
+   "installed_z_offset_mm": 9.7,
+   "support": {
+    "bridges": 2,
+    "bridge_area_mm2": 139.7,
+    "max_bridge_mm": 8.0,
+    "long_bridges": 0,
+    "cantilevers": 0,
+    "max_cantilever_mm": 0.0,
+    "islands": 0,
+    "max_island_mm2": 0.0
+   }
+  },
+  {
+   "folder": "03_interior",
+   "stem": "rear_bench_seat",
+   "key": "bench",
+   "orient": "seat base on the bed",
+   "mesh": {
+    "triangles": 1484,
+    "watertight": true,
+    "edges_2_manifold": true,
+    "winding_consistent": true,
+    "shells": 1,
+    "shells_expected": 1,
+    "volume_cm3": 37.02,
+    "size_mm": [
+     47.58,
+     62.0,
+     54.2
+    ],
+    "bed_z": 0.0,
+    "bed_contact_mm2": 1672.4,
+    "min_shell_bed_contact_mm2": 1672.4,
+    "mb": 0.07
+   },
+   "export": {
+    "pinches_separated": 4,
+    "slivers_dropped": 0,
+    "repaired_faces": 0,
+    "dropped_pieces": 0,
+    "dropped_mm3": 0.0
+   },
+   "scale": "ok (1:20, \u00b10.003 mm)",
+   "path": "stls/03_interior/rear_bench_seat.stl",
+   "installed_z_offset_mm": 9.7,
+   "support": {
+    "bridges": 3,
+    "bridge_area_mm2": 173.1,
+    "max_bridge_mm": 7.84,
+    "long_bridges": 0,
+    "cantilevers": 0,
+    "max_cantilever_mm": 0.0,
+    "islands": 0,
+    "max_island_mm2": 0.0
+   }
+  },
+  {
+   "folder": "03_interior",
+   "stem": "dashboard_steering_console",
+   "key": "dashboard",
+   "orient": "dashboard upright; steering wheel face down beside it",
+   "mesh": {
+    "triangles": 6840,
+    "watertight": true,
+    "edges_2_manifold": true,
+    "winding_consistent": true,
+    "shells": 2,
+    "shells_expected": 2,
+    "volume_cm3": 42.0,
+    "size_mm": [
+     93.1,
+     82.0,
+     40.9
+    ],
+    "bed_z": 0.0,
+    "bed_contact_mm2": 1178.7,
+    "min_shell_bed_contact_mm2": 172.2,
+    "mb": 0.33
+   },
+   "export": {
+    "pinches_separated": 2,
+    "slivers_dropped": 0,
+    "repaired_faces": 0,
+    "dropped_pieces": 0,
+    "dropped_mm3": 0.0
+   },
+   "scale": "ok (1:20, \u00b10.000 mm)",
+   "path": "stls/03_interior/dashboard_steering_console.stl",
+   "support": {
+    "bridges": 6,
+    "bridge_area_mm2": 41.3,
+    "max_bridge_mm": 8.6,
+    "long_bridges": 0,
+    "cantilevers": 2,
+    "max_cantilever_mm": 2.05,
+    "islands": 0,
+    "max_island_mm2": 0.0
+   }
+  },
+  {
+   "folder": "03_interior",
+   "stem": "door_cards_set",
+   "key": "door_cards",
+   "orient": "upright on their bottom edges",
+   "mesh": {
+    "triangles": 19280,
+    "watertight": true,
+    "edges_2_manifold": true,
+    "winding_consistent": true,
+    "shells": 4,
+    "shells_expected": 4,
+    "volume_cm3": 6.12,
+    "size_mm": [
+     96.0,
+     91.18,
+     30.0
+    ],
+    "bed_z": 0.0,
+    "bed_contact_mm2": 162.3,
+    "min_shell_bed_contact_mm2": 33.2,
+    "mb": 0.92
+   },
+   "export": {
+    "pinches_separated": 0,
+    "slivers_dropped": 0,
+    "repaired_faces": 0,
+    "dropped_pieces": 0,
+    "dropped_mm3": 0.0
+   },
+   "scale": "ok (1:20, \u00b10.001 mm)",
+   "path": "stls/03_interior/door_cards_set.stl",
+   "installed_z_offset_mm": 13.5,
+   "support": {
+    "bridges": 4,
+    "bridge_area_mm2": 4.9,
+    "max_bridge_mm": 3.21,
+    "long_bridges": 0,
+    "cantilevers": 9,
+    "max_cantilever_mm": 1.15,
+    "islands": 0,
+    "max_island_mm2": 0.0
+   }
+  },
+  {
+   "folder": "04_body_shell",
+   "stem": "removable_roof_solar_canopy",
+   "key": "canopy",
+   "orient": "flat belt-line underside on the bed",
+   "mesh": {
+    "triangles": 793818,
+    "watertight": true,
+    "edges_2_manifold": true,
+    "winding_consistent": true,
+    "shells": 1,
+    "shells_expected": 1,
+    "volume_cm3": 245.66,
+    "size_mm": [
+     169.34,
+     107.53,
+     30.2
+    ],
+    "bed_z": 0.0,
+    "bed_contact_mm2": 11884.4,
+    "min_shell_bed_contact_mm2": 11884.4,
+    "mb": 37.85
+   },
+   "export": {
+    "pinches_separated": 50,
+    "slivers_dropped": 0,
+    "repaired_faces": 0,
+    "dropped_pieces": 0,
+    "dropped_mm3": 0.0
+   },
+   "scale": "ok (1:20, \u00b10.003 mm)",
+   "path": "stls/04_body_shell/removable_roof_solar_canopy.stl",
+   "installed_z_offset_mm": 45.0,
+   "support": {
+    "bridges": 6,
+    "bridge_area_mm2": 23.4,
+    "max_bridge_mm": 3.49,
+    "long_bridges": 0,
+    "cantilevers": 2,
+    "max_cantilever_mm": 1.15,
+    "islands": 3,
+    "max_island_mm2": 0.45
+   }
+  },
+  {
+   "folder": "04_body_shell",
+   "stem": "hood_solar_bonnet",
+   "key": "hood",
+   "orient": "flat underside on the bed",
+   "mesh": {
+    "triangles": 52926,
+    "watertight": true,
+    "edges_2_manifold": true,
+    "winding_consistent": true,
+    "shells": 1,
+    "shells_expected": 1,
+    "volume_cm3": 13.63,
+    "size_mm": [
+     55.71,
+     81.5,
+     6.89
+    ],
+    "bed_z": 0.0,
+    "bed_contact_mm2": 3749.5,
+    "min_shell_bed_contact_mm2": 3749.5,
+    "mb": 2.52
+   },
+   "export": {
+    "pinches_separated": 0,
+    "slivers_dropped": 0,
+    "repaired_faces": 0,
+    "dropped_pieces": 0,
+    "dropped_mm3": 0.0
+   },
+   "scale": "ok (1:20, \u00b10.004 mm)",
+   "path": "stls/04_body_shell/hood_solar_bonnet.stl",
+   "installed_z_offset_mm": 36.9,
+   "support": {
+    "bridges": 2,
+    "bridge_area_mm2": 15.4,
+    "max_bridge_mm": 3.41,
+    "long_bridges": 0,
+    "cantilevers": 0,
+    "max_cantilever_mm": 0.0,
+    "islands": 0,
+    "max_island_mm2": 0.0
+   }
+  },
+  {
+   "folder": "04_body_shell",
+   "stem": "main_outer_body_shell",
+   "key": "main",
+   "orient": "upright on its sill line",
+   "mesh": {
+    "triangles": 684928,
+    "watertight": true,
+    "edges_2_manifold": true,
+    "winding_consistent": true,
+    "shells": 1,
+    "shells_expected": 1,
+    "volume_cm3": 86.88,
+    "size_mm": [
+     239.92,
+     101.34,
+     39.15
+    ],
+    "bed_z": 0.0,
+    "bed_contact_mm2": 1454.5,
+    "min_shell_bed_contact_mm2": 1454.5,
+    "mb": 32.66
+   },
+   "export": {
+    "pinches_separated": 1290,
+    "slivers_dropped": 0,
+    "repaired_faces": 0,
+    "dropped_pieces": 0,
+    "dropped_mm3": 0.0
+   },
+   "scale": "ok (1:20, \u00b10.003 mm)",
+   "path": "stls/04_body_shell/main_outer_body_shell.stl",
+   "installed_z_offset_mm": 7.35,
+   "support": {
+    "bridges": 15,
+    "bridge_area_mm2": 652.1,
+    "max_bridge_mm": 12.0,
+    "long_bridges": 0,
+    "cantilevers": 28,
+    "max_cantilever_mm": 1.74,
+    "islands": 42,
+    "max_island_mm2": 0.41
+   }
+  },
+  {
+   "folder": "04_body_shell",
+   "stem": "tailgate_rear_hatch",
+   "key": "tail",
+   "orient": "upright on its bottom edge",
+   "mesh": {
+    "triangles": 169076,
+    "watertight": true,
+    "edges_2_manifold": true,
+    "winding_consistent": true,
+    "shells": 1,
+    "shells_expected": 1,
+    "volume_cm3": 10.02,
+    "size_mm": [
+     25.78,
+     68.89,
+     38.58
+    ],
+    "bed_z": 0.0,
+    "bed_contact_mm2": 101.6,
+    "min_shell_bed_contact_mm2": 101.6,
+    "mb": 8.06
+   },
+   "export": {
+    "pinches_separated": 567,
+    "slivers_dropped": 0,
+    "repaired_faces": 2,
+    "dropped_pieces": 0,
+    "dropped_mm3": 0.0
+   },
+   "scale": "ok (1:20, \u00b10.003 mm)",
+   "path": "stls/04_body_shell/tailgate_rear_hatch.stl",
+   "installed_z_offset_mm": 33.75,
+   "support": {
+    "bridges": 1,
+    "bridge_area_mm2": 75.0,
+    "max_bridge_mm": 8.16,
+    "long_bridges": 0,
+    "cantilevers": 21,
+    "max_cantilever_mm": 1.63,
+    "islands": 12,
+    "max_island_mm2": 0.06
+   }
+  },
+  {
+   "folder": "05_wheels_and_hardware",
+   "stem": "wheels_rims_x4",
+   "key": "rims",
+   "orient": "inner face down",
+   "mesh": {
+    "triangles": 300464,
+    "watertight": true,
+    "edges_2_manifold": true,
+    "winding_consistent": true,
+    "shells": 4,
+    "shells_expected": 4,
+    "volume_cm3": 25.31,
+    "size_mm": [
+     74.53,
+     74.53,
+     13.47
+    ],
+    "bed_z": 0.0,
+    "bed_contact_mm2": 2414.0,
+    "min_shell_bed_contact_mm2": 603.5,
+    "mb": 14.33
+   },
+   "export": {
+    "pinches_separated": 0,
+    "slivers_dropped": 0,
+    "repaired_faces": 0,
+    "dropped_pieces": 0,
+    "dropped_mm3": 0.0
+   },
+   "scale": "ok, rim O.D. 30.21 mm",
+   "path": "stls/05_wheels_and_hardware/wheels_rims_x4.stl",
+   "support": {
+    "bridges": 4,
+    "bridge_area_mm2": 269.6,
+    "max_bridge_mm": 2.09,
+    "long_bridges": 0,
+    "cantilevers": 0,
+    "max_cantilever_mm": 0.0,
+    "islands": 0,
+    "max_island_mm2": 0.0
+   }
+  },
+  {
+   "folder": "05_wheels_and_hardware",
+   "stem": "tires_treaded_x4",
+   "key": "tyres",
+   "orient": "inner sidewall down",
+   "mesh": {
+    "triangles": 258048,
+    "watertight": true,
+    "edges_2_manifold": true,
+    "winding_consistent": true,
+    "shells": 4,
+    "shells_expected": 4,
+    "volume_cm3": 32.23,
+    "size_mm": [
+     84.63,
+     84.63,
+     13.75
+    ],
+    "bed_z": 0.0,
+    "bed_contact_mm2": 1869.2,
+    "min_shell_bed_contact_mm2": 467.3,
+    "mb": 12.3
+   },
+   "export": {
+    "pinches_separated": 0,
+    "slivers_dropped": 0,
+    "repaired_faces": 0,
+    "dropped_pieces": 0,
+    "dropped_mm3": 0.0
+   },
+   "scale": "ok, tyre O.D. 40.31 mm = 806 mm full size",
+   "path": "stls/05_wheels_and_hardware/tires_treaded_x4.stl",
+   "support": {
+    "bridges": 0,
+    "bridge_area_mm2": 0,
+    "max_bridge_mm": 0.0,
+    "long_bridges": 0,
+    "cantilevers": 0,
+    "max_cantilever_mm": 0.0,
+    "islands": 0,
+    "max_island_mm2": 0.0
+   }
+  },
+  {
+   "folder": "05_wheels_and_hardware",
+   "stem": "clear_lens_headlights_taillights",
+   "key": "lenses",
+   "orient": "upright on their bottom edges",
+   "mesh": {
+    "triangles": 10332,
+    "watertight": true,
+    "edges_2_manifold": true,
+    "winding_consistent": true,
+    "shells": 2,
+    "shells_expected": 2,
+    "volume_cm3": 0.26,
+    "size_mm": [
+     233.26,
+     78.0,
+     2.6
+    ],
+    "bed_z": 0.0,
+    "bed_contact_mm2": 246.2,
+    "min_shell_bed_contact_mm2": 111.3,
+    "mb": 0.49
+   },
+   "export": {
+    "pinches_separated": 0,
+    "slivers_dropped": 0,
+    "repaired_faces": 0,
+    "dropped_pieces": 0,
+    "dropped_mm3": 0.0
+   },
+   "scale": "ok (1:20, \u00b10.004 mm)",
+   "path": "stls/05_wheels_and_hardware/clear_lens_headlights_taillights.stl",
+   "support": {
+    "bridges": 0,
+    "bridge_area_mm2": 0,
+    "max_bridge_mm": 0.0,
+    "long_bridges": 0,
+    "cantilevers": 0,
+    "max_cantilever_mm": 0.0,
+    "islands": 0,
+    "max_island_mm2": 0.0
+   }
+  }
+ ],
+ "plates_3mf": {
+  "01_chassis": {
+   "objects": 3,
+   "expected": 3,
+   "unit_mm": true,
+   "all_watertight": true
+  },
+  "02_powertrain": {
+   "objects": 5,
+   "expected": 5,
+   "unit_mm": true,
+   "all_watertight": true
+  },
+  "03_interior": {
+   "objects": 5,
+   "expected": 5,
+   "unit_mm": true,
+   "all_watertight": true
+  },
+  "04_body_shell": {
+   "objects": 4,
+   "expected": 4,
+   "unit_mm": true,
+   "all_watertight": true
+  },
+  "05_wheels_and_hardware": {
+   "objects": 3,
+   "expected": 3,
+   "unit_mm": true,
+   "all_watertight": true
+  }
+ },
+ "clearance_pass": {
+  "eaxle_front > harness": 10.803,
+  "eaxle_rear > harness": 6.735,
+  "harness > baseplate": 416.222,
+  "harness > front_sub": 45.404,
+  "harness > tray": 26.297,
+  "eaxle_front > front_sub": 0.217,
+  "eaxle_front > baseplate": 293.991,
+  "eaxle_rear > baseplate": 159.065,
+  "front_sub > baseplate": 703.9,
+  "rear_sub > baseplate": 665.394,
+  "tray > baseplate": 3894.836,
+  "tray > modules": 1378.858,
+  "tray > dashboard": 4.775,
+  "tray > floor_tub": 36.753,
+  "dashboard > floor_tub": 214.241,
+  "dashboard > seats": 42.848,
+  "main > floor_tub": 1.106
+ },
+ "validation": {
+  "interference_mm3": {},
+  "assembly_paths": {
+   "harness": {
+    "step": 2,
+    "blocked_mm2": 0.0,
+    "at": null
+   },
+   "front_sub": {
+    "step": 3,
+    "blocked_mm2": 0.0,
+    "at": null
+   },
+   "rear_sub": {
+    "step": 3,
+    "blocked_mm2": 0.0,
+    "at": null
+   },
+   "eaxle_front": {
+    "step": 4,
+    "blocked_mm2": 0.0,
+    "at": null
+   },
+   "eaxle_rear": {
+    "step": 4,
+    "blocked_mm2": 0.0,
+    "at": null
+   },
+   "tray": {
+    "step": 5,
+    "blocked_mm2": 0.0,
+    "at": null
+   },
+   "modules": {
+    "step": 5,
+    "blocked_mm2": 0.0,
+    "at": null
+   },
+   "floor_tub": {
+    "step": 6,
+    "blocked_mm2": 0.0,
+    "at": null
+   },
+   "cargo_deck": {
+    "step": 7,
+    "blocked_mm2": 0.0,
+    "at": null
+   },
+   "dashboard": {
+    "step": 8,
+    "blocked_mm2": 0.0,
+    "at": null
+   },
+   "seats": {
+    "step": 8,
+    "blocked_mm2": 0.0,
+    "at": null
+   },
+   "bench": {
+    "step": 8,
+    "blocked_mm2": 0.0,
+    "at": null
+   },
+   "main": {
+    "step": 11,
+    "blocked_mm2": 0.0,
+    "at": null
+   },
+   "hood": {
+    "step": 13,
+    "blocked_mm2": 0.0,
+    "at": null
+   },
+   "canopy": {
+    "step": 13,
+    "blocked_mm2": 0.0,
+    "at": null
+   },
+   "tail": {
+    "step": 13,
+    "blocked_mm2": 0.0,
+    "at": null
+   },
+   "door_cards": {
+    "step": 10,
+    "blocked_mm2": 0.0,
+    "at": null,
+    "direction": "along y onto the pins, from 10 mm inboard after lowering into the shell"
+   },
+   "lenses": {
+    "step": 12,
+    "blocked_mm2": 0.0,
+    "at": null,
+    "direction": "into the lamp windows from outside"
+   }
+  },
+  "joints": [
+   {
+    "kind": "pin",
+    "male": "chassis_baseplate_m2_bosses",
+    "female": "main_outer_body_shell",
+    "p": [
+     1650.0,
+     921.9089901481184,
+     377.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 1.5,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": false,
+    "measured_gap_mm": 0.246,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "pin",
+    "male": "chassis_baseplate_m2_bosses",
+    "female": "main_outer_body_shell",
+    "p": [
+     1650.0,
+     -921.9089901481184,
+     377.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 1.5,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": false,
+    "measured_gap_mm": 0.246,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "pin",
+    "male": "chassis_baseplate_m2_bosses",
+    "female": "main_outer_body_shell",
+    "p": [
+     2300.0,
+     920.9902485243629,
+     377.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 1.5,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": false,
+    "measured_gap_mm": 0.246,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "pin",
+    "male": "chassis_baseplate_m2_bosses",
+    "female": "main_outer_body_shell",
+    "p": [
+     2300.0,
+     -920.9902485243629,
+     377.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 1.5,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": false,
+    "measured_gap_mm": 0.246,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "pin",
+    "male": "chassis_baseplate_m2_bosses",
+    "female": "main_outer_body_shell",
+    "p": [
+     2750.0,
+     921.5029708725624,
+     377.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 1.5,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": false,
+    "measured_gap_mm": 0.246,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "pin",
+    "male": "chassis_baseplate_m2_bosses",
+    "female": "main_outer_body_shell",
+    "p": [
+     2750.0,
+     -921.5029708725624,
+     377.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 1.5,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": false,
+    "measured_gap_mm": 0.246,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "pin",
+    "male": "chassis_baseplate_m2_bosses",
+    "female": "main_outer_body_shell",
+    "p": [
+     3150.0,
+     922.7347671874554,
+     377.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 1.5,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": false,
+    "measured_gap_mm": 0.246,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "pin",
+    "male": "chassis_baseplate_m2_bosses",
+    "female": "main_outer_body_shell",
+    "p": [
+     3150.0,
+     -922.7347671874554,
+     377.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 1.5,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": false,
+    "measured_gap_mm": 0.246,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "boss",
+    "male": "chassis_baseplate_m2_bosses",
+    "female": "front_subframe_suspension",
+    "p": [
+     1205.0,
+     365.0,
+     249.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.0,
+    "depth": 1.5,
+    "back": 0.75,
+    "fdepth": 1.75,
+    "blind": false,
+    "measured_gap_mm": 0.249,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "boss",
+    "male": "chassis_baseplate_m2_bosses",
+    "female": "front_subframe_suspension",
+    "p": [
+     1205.0,
+     -365.0,
+     249.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.0,
+    "depth": 1.5,
+    "back": 0.75,
+    "fdepth": 1.75,
+    "blind": false,
+    "measured_gap_mm": 0.249,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "boss",
+    "male": "chassis_baseplate_m2_bosses",
+    "female": "rear_subframe_suspension",
+    "p": [
+     3540.0,
+     360.0,
+     249.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.0,
+    "depth": 1.5,
+    "back": 0.75,
+    "fdepth": 1.75,
+    "blind": false,
+    "measured_gap_mm": 0.249,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "screw",
+    "male": null,
+    "female": "rear_subframe_suspension",
+    "p": [
+     3540.0,
+     360.0,
+     279.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 1.0,
+    "back": 0.5,
+    "fdepth": 0.75,
+    "blind": false,
+    "measured_gap_mm": 0.244,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "boss",
+    "male": "chassis_baseplate_m2_bosses",
+    "female": "rear_subframe_suspension",
+    "p": [
+     3540.0,
+     -360.0,
+     249.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.0,
+    "depth": 1.5,
+    "back": 0.75,
+    "fdepth": 1.75,
+    "blind": false,
+    "measured_gap_mm": 0.249,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "screw",
+    "male": null,
+    "female": "rear_subframe_suspension",
+    "p": [
+     3540.0,
+     -360.0,
+     279.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 1.0,
+    "back": 0.5,
+    "fdepth": 0.75,
+    "blind": false,
+    "measured_gap_mm": 0.244,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "boss",
+    "male": "chassis_baseplate_m2_bosses",
+    "female": "battery_tray_lower_housing",
+    "p": [
+     1550.0,
+     0.0,
+     249.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.0,
+    "depth": 1.5,
+    "back": 0.75,
+    "fdepth": 1.75,
+    "blind": false,
+    "measured_gap_mm": 0.249,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "screw",
+    "male": null,
+    "female": "battery_tray_lower_housing",
+    "p": [
+     1550.0,
+     0.0,
+     279.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 1.0,
+    "back": 0.5,
+    "fdepth": 2.75,
+    "blind": false,
+    "measured_gap_mm": 0.244,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "boss",
+    "male": "chassis_baseplate_m2_bosses",
+    "female": "battery_tray_lower_housing",
+    "p": [
+     1550.0,
+     620.0,
+     249.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.0,
+    "depth": 1.5,
+    "back": 0.75,
+    "fdepth": 1.75,
+    "blind": false,
+    "measured_gap_mm": 0.249,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "screw",
+    "male": null,
+    "female": "battery_tray_lower_housing",
+    "p": [
+     1550.0,
+     620.0,
+     279.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 1.0,
+    "back": 0.5,
+    "fdepth": 0.75,
+    "blind": false,
+    "measured_gap_mm": 0.244,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "boss",
+    "male": "chassis_baseplate_m2_bosses",
+    "female": "battery_tray_lower_housing",
+    "p": [
+     3200.0,
+     0.0,
+     249.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.0,
+    "depth": 1.5,
+    "back": 0.75,
+    "fdepth": 1.75,
+    "blind": false,
+    "measured_gap_mm": 0.249,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "boss",
+    "male": "chassis_baseplate_m2_bosses",
+    "female": "front_e_axle_and_inverter",
+    "p": [
+     890.0,
+     -90.0,
+     249.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.0,
+    "depth": 1.5,
+    "back": 0.75,
+    "fdepth": 1.75,
+    "blind": false,
+    "measured_gap_mm": 0.249,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "boss",
+    "male": "chassis_baseplate_m2_bosses",
+    "female": "front_e_axle_and_inverter",
+    "p": [
+     900.0,
+     157.0,
+     249.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.0,
+    "depth": 1.5,
+    "back": 0.75,
+    "fdepth": 1.75,
+    "blind": false,
+    "measured_gap_mm": 0.249,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "boss",
+    "male": "chassis_baseplate_m2_bosses",
+    "female": "rear_e_axle_and_inverter",
+    "p": [
+     3840.0,
+     -90.0,
+     249.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.0,
+    "depth": 1.5,
+    "back": 0.75,
+    "fdepth": 1.75,
+    "blind": false,
+    "measured_gap_mm": 0.249,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "boss",
+    "male": "chassis_baseplate_m2_bosses",
+    "female": "rear_e_axle_and_inverter",
+    "p": [
+     3830.0,
+     160.0,
+     249.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.0,
+    "depth": 1.5,
+    "back": 0.75,
+    "fdepth": 1.75,
+    "blind": false,
+    "measured_gap_mm": 0.249,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "peg",
+    "male": "interior_floor_tub",
+    "female": "front_bucket_seats_pair",
+    "p": [
+     2120.0,
+     -490.0,
+     419.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 1.5,
+    "back": 0.75,
+    "fdepth": 1.75,
+    "blind": false,
+    "measured_gap_mm": 0.245,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "peg",
+    "male": "interior_floor_tub",
+    "female": "front_bucket_seats_pair",
+    "p": [
+     2450.0,
+     -290.0,
+     419.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 1.5,
+    "back": 0.75,
+    "fdepth": 1.75,
+    "blind": false,
+    "measured_gap_mm": 0.245,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "peg",
+    "male": "interior_floor_tub",
+    "female": "front_bucket_seats_pair",
+    "p": [
+     2120.0,
+     290.0,
+     419.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 1.5,
+    "back": 0.75,
+    "fdepth": 1.75,
+    "blind": false,
+    "measured_gap_mm": 0.245,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "peg",
+    "male": "interior_floor_tub",
+    "female": "front_bucket_seats_pair",
+    "p": [
+     2450.0,
+     490.0,
+     419.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 1.5,
+    "back": 0.75,
+    "fdepth": 1.75,
+    "blind": false,
+    "measured_gap_mm": 0.245,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "peg",
+    "male": "interior_floor_tub",
+    "female": "rear_bench_seat",
+    "p": [
+     3100.0,
+     -370.0,
+     419.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 1.5,
+    "back": 0.75,
+    "fdepth": 1.75,
+    "blind": false,
+    "measured_gap_mm": 0.245,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "peg",
+    "male": "interior_floor_tub",
+    "female": "rear_bench_seat",
+    "p": [
+     3100.0,
+     370.0,
+     419.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 1.5,
+    "back": 0.75,
+    "fdepth": 1.75,
+    "blind": false,
+    "measured_gap_mm": 0.245,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "peg",
+    "male": "interior_floor_tub",
+    "female": "rear_bench_seat",
+    "p": [
+     3250.0,
+     0.0,
+     419.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 1.5,
+    "back": 0.75,
+    "fdepth": 1.75,
+    "blind": false,
+    "measured_gap_mm": 0.245,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "peg",
+    "male": "interior_floor_tub",
+    "female": "dashboard_steering_console",
+    "p": [
+     1450.0,
+     0.0,
+     419.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 1.5,
+    "back": 0.75,
+    "fdepth": 1.75,
+    "blind": false,
+    "measured_gap_mm": 0.249,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "peg",
+    "male": "interior_floor_tub",
+    "female": "dashboard_steering_console",
+    "p": [
+     2450.0,
+     0.0,
+     419.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 1.5,
+    "back": 0.75,
+    "fdepth": 1.75,
+    "blind": false,
+    "measured_gap_mm": 0.249,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "peg",
+    "male": "dashboard_steering_console",
+    "female": "dashboard_steering_console",
+    "p": [
+     1793.7570874565426,
+     -390.0,
+     1070.7878540784118
+    ],
+    "axis": [
+     -0.9205048534524404,
+     -0.0,
+     -0.39073112848927377
+    ],
+    "male_d": 2.0,
+    "depth": 4.0,
+    "back": 2.0,
+    "fdepth": 4.3,
+    "blind": false,
+    "male_shell": "steering_wheel",
+    "measured_gap_mm": 0.248,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "peg",
+    "male": "battery_tray_lower_housing",
+    "female": "interior_floor_tub",
+    "p": [
+     1436.0,
+     -300.0,
+     392.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 1.2,
+    "back": 0.6,
+    "fdepth": 1.15,
+    "blind": false,
+    "measured_gap_mm": 0.245,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "peg",
+    "male": "battery_tray_lower_housing",
+    "female": "interior_floor_tub",
+    "p": [
+     1436.0,
+     300.0,
+     392.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 1.2,
+    "back": 0.6,
+    "fdepth": 1.15,
+    "blind": false,
+    "measured_gap_mm": 0.245,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "pin",
+    "male": "door_cards_set",
+    "female": "main_outer_body_shell",
+    "p": [
+     1740.0,
+     897.2712307970569,
+     700.0
+    ],
+    "axis": [
+     0.0,
+     1.0,
+     0.0
+    ],
+    "male_d": 1.5,
+    "depth": 1.0,
+    "back": 0.5,
+    "fdepth": 1.25,
+    "blind": false,
+    "measured_gap_mm": 0.244,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "pin",
+    "male": "door_cards_set",
+    "female": "main_outer_body_shell",
+    "p": [
+     2220.0,
+     893.9752823892413,
+     700.0
+    ],
+    "axis": [
+     0.0,
+     1.0,
+     0.0
+    ],
+    "male_d": 1.5,
+    "depth": 1.0,
+    "back": 0.5,
+    "fdepth": 1.25,
+    "blind": false,
+    "measured_gap_mm": 0.244,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "pin",
+    "male": "door_cards_set",
+    "female": "main_outer_body_shell",
+    "p": [
+     1740.0,
+     -897.2712307970569,
+     700.0
+    ],
+    "axis": [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    "male_d": 1.5,
+    "depth": 1.0,
+    "back": 0.5,
+    "fdepth": 1.25,
+    "blind": false,
+    "measured_gap_mm": 0.244,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "pin",
+    "male": "door_cards_set",
+    "female": "main_outer_body_shell",
+    "p": [
+     2220.0,
+     -893.9752823892413,
+     700.0
+    ],
+    "axis": [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    "male_d": 1.5,
+    "depth": 1.0,
+    "back": 0.5,
+    "fdepth": 1.25,
+    "blind": false,
+    "measured_gap_mm": 0.244,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "pin",
+    "male": "door_cards_set",
+    "female": "main_outer_body_shell",
+    "p": [
+     2793.75,
+     896.3061552170207,
+     700.0
+    ],
+    "axis": [
+     0.0,
+     1.0,
+     0.0
+    ],
+    "male_d": 1.5,
+    "depth": 1.0,
+    "back": 0.5,
+    "fdepth": 1.25,
+    "blind": false,
+    "measured_gap_mm": 0.244,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "pin",
+    "male": "door_cards_set",
+    "female": "main_outer_body_shell",
+    "p": [
+     3211.25,
+     903.9280477517877,
+     700.0
+    ],
+    "axis": [
+     0.0,
+     1.0,
+     0.0
+    ],
+    "male_d": 1.5,
+    "depth": 1.0,
+    "back": 0.5,
+    "fdepth": 1.25,
+    "blind": false,
+    "measured_gap_mm": 0.244,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "pin",
+    "male": "door_cards_set",
+    "female": "main_outer_body_shell",
+    "p": [
+     2793.75,
+     -896.3061552170207,
+     700.0
+    ],
+    "axis": [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    "male_d": 1.5,
+    "depth": 1.0,
+    "back": 0.5,
+    "fdepth": 1.25,
+    "blind": false,
+    "measured_gap_mm": 0.244,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "pin",
+    "male": "door_cards_set",
+    "female": "main_outer_body_shell",
+    "p": [
+     3211.25,
+     -903.9280477517877,
+     700.0
+    ],
+    "axis": [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    "male_d": 1.5,
+    "depth": 1.0,
+    "back": 0.5,
+    "fdepth": 1.25,
+    "blind": false,
+    "measured_gap_mm": 0.244,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "chassis_baseplate_m2_bosses",
+    "p": [
+     4100.0,
+     600.0,
+     670.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.242,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "cargo_deck",
+    "p": [
+     4100.0,
+     600.0,
+     710.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.242,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "chassis_baseplate_m2_bosses",
+    "p": [
+     4100.0,
+     -600.0,
+     670.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.242,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "cargo_deck",
+    "p": [
+     4100.0,
+     -600.0,
+     710.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.242,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "rear_subframe_suspension",
+    "p": [
+     4500.0,
+     560.0,
+     670.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.242,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "cargo_deck",
+    "p": [
+     4500.0,
+     560.0,
+     710.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.242,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "rear_subframe_suspension",
+    "p": [
+     4500.0,
+     -560.0,
+     670.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.242,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "cargo_deck",
+    "p": [
+     4500.0,
+     -560.0,
+     710.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.242,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "screw",
+    "male": null,
+    "female": "interior_floor_tub",
+    "p": [
+     2887.0,
+     770.0,
+     390.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 1.0,
+    "back": 0.5,
+    "fdepth": 3.1,
+    "blind": false,
+    "measured_gap_mm": 0.239,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "screw",
+    "male": null,
+    "female": "interior_floor_tub",
+    "p": [
+     2887.0,
+     -770.0,
+     390.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 1.0,
+    "back": 0.5,
+    "fdepth": 3.1,
+    "blind": false,
+    "measured_gap_mm": 0.239,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "axle",
+    "male": null,
+    "female": "front_subframe_suspension",
+    "p": [
+     890.0,
+     660.0,
+     403.15
+    ],
+    "axis": [
+     0.0,
+     1.0,
+     0.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 0.5,
+    "fdepth": 1.0,
+    "blind": false,
+    "measured_gap_mm": 0.241,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "axle",
+    "male": null,
+    "female": "front_e_axle_and_inverter",
+    "p": [
+     890.0,
+     0.0,
+     403.15
+    ],
+    "axis": [
+     0.0,
+     1.0,
+     0.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 0.5,
+    "fdepth": 1.0,
+    "blind": false,
+    "measured_gap_mm": 0.241,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "axle",
+    "male": null,
+    "female": "rear_subframe_suspension",
+    "p": [
+     3840.0,
+     660.0,
+     403.15
+    ],
+    "axis": [
+     0.0,
+     1.0,
+     0.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 0.5,
+    "fdepth": 1.0,
+    "blind": false,
+    "measured_gap_mm": 0.241,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "axle",
+    "male": null,
+    "female": "rear_e_axle_and_inverter",
+    "p": [
+     3840.0,
+     0.0,
+     403.15
+    ],
+    "axis": [
+     0.0,
+     1.0,
+     0.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 0.5,
+    "fdepth": 1.0,
+    "blind": false,
+    "measured_gap_mm": 0.241,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "screw",
+    "male": null,
+    "female": "chassis_baseplate_m2_bosses",
+    "p": [
+     360.0,
+     770.0,
+     276.0062255859375
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 2.0,
+    "back": 3.3,
+    "fdepth": 6.7496887207031255,
+    "blind": false,
+    "measured_gap_mm": 0.239,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "screw",
+    "male": null,
+    "female": "chassis_baseplate_m2_bosses",
+    "p": [
+     360.0,
+     -770.0,
+     276.0062255859375
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 2.0,
+    "back": 3.3,
+    "fdepth": 6.7496887207031255,
+    "blind": false,
+    "measured_gap_mm": 0.239,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "screw",
+    "male": null,
+    "female": "chassis_baseplate_m2_bosses",
+    "p": [
+     1450.0,
+     880.0,
+     304.2330322265625
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 2.0,
+    "back": 3.3,
+    "fdepth": 5.338348388671875,
+    "blind": false,
+    "measured_gap_mm": 0.239,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "screw",
+    "male": null,
+    "female": "chassis_baseplate_m2_bosses",
+    "p": [
+     1450.0,
+     -880.0,
+     304.2330322265625
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 2.0,
+    "back": 3.3,
+    "fdepth": 5.338348388671875,
+    "blind": false,
+    "measured_gap_mm": 0.239,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "screw",
+    "male": null,
+    "female": "chassis_baseplate_m2_bosses",
+    "p": [
+     4480.0,
+     760.0,
+     346.4798583984375
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 2.0,
+    "back": 3.3,
+    "fdepth": 3.226007080078125,
+    "blind": false,
+    "measured_gap_mm": 0.239,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "screw",
+    "male": null,
+    "female": "chassis_baseplate_m2_bosses",
+    "p": [
+     4480.0,
+     -760.0,
+     346.4798583984375
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 2.0,
+    "back": 3.3,
+    "fdepth": 3.226007080078125,
+    "blind": false,
+    "measured_gap_mm": 0.239,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "screw",
+    "male": null,
+    "female": "chassis_baseplate_m2_bosses",
+    "p": [
+     3330.0,
+     880.0,
+     294.8759765625
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 2.0,
+    "back": 3.3,
+    "fdepth": 5.806201171875,
+    "blind": false,
+    "measured_gap_mm": 0.239,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "screw",
+    "male": null,
+    "female": "chassis_baseplate_m2_bosses",
+    "p": [
+     3330.0,
+     -880.0,
+     294.838623046875
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 2.0,
+    "back": 3.3,
+    "fdepth": 5.8080688476562505,
+    "blind": false,
+    "measured_gap_mm": 0.239,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "pin",
+    "male": "main_outer_body_shell",
+    "female": "removable_roof_solar_canopy",
+    "p": [
+     1590.0,
+     897.6436256430254,
+     1125.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 1.5,
+    "depth": 2.0,
+    "back": 0.75,
+    "fdepth": 2.25,
+    "blind": false,
+    "measured_gap_mm": 0.246,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "pin",
+    "male": "main_outer_body_shell",
+    "female": "removable_roof_solar_canopy",
+    "p": [
+     1590.0,
+     -897.6436256430254,
+     1125.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 1.5,
+    "depth": 2.0,
+    "back": 0.75,
+    "fdepth": 2.25,
+    "blind": false,
+    "measured_gap_mm": 0.246,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "pin",
+    "male": "main_outer_body_shell",
+    "female": "removable_roof_solar_canopy",
+    "p": [
+     3700.0,
+     747.6332882982729,
+     1125.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 1.5,
+    "depth": 2.0,
+    "back": 0.75,
+    "fdepth": 2.25,
+    "blind": false,
+    "measured_gap_mm": 0.246,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "pin",
+    "male": "main_outer_body_shell",
+    "female": "removable_roof_solar_canopy",
+    "p": [
+     3700.0,
+     -747.6332882982729,
+     1125.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 1.5,
+    "depth": 2.0,
+    "back": 0.75,
+    "fdepth": 2.25,
+    "blind": false,
+    "measured_gap_mm": 0.246,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "main_outer_body_shell",
+    "p": [
+     3800.0,
+     735.0,
+     1080.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.242,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "removable_roof_solar_canopy",
+    "p": [
+     3800.0,
+     735.0,
+     1130.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.242,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "main_outer_body_shell",
+    "p": [
+     3800.0,
+     -735.0,
+     1080.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.242,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "removable_roof_solar_canopy",
+    "p": [
+     3800.0,
+     -735.0,
+     1130.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.242,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "main_outer_body_shell",
+    "p": [
+     1150.0,
+     640.0,
+     923.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.242,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "hood_solar_bonnet",
+    "p": [
+     1150.0,
+     640.0,
+     968.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.242,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "main_outer_body_shell",
+    "p": [
+     1150.0,
+     -640.0,
+     923.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.242,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "hood_solar_bonnet",
+    "p": [
+     1150.0,
+     -640.0,
+     968.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.242,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "hood_solar_bonnet",
+    "p": [
+     395.0,
+     170.0,
+     968.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.242,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "front_e_axle_and_inverter",
+    "p": [
+     395.0,
+     170.0,
+     923.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.242,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "hood_solar_bonnet",
+    "p": [
+     395.0,
+     -170.0,
+     968.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.242,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "front_e_axle_and_inverter",
+    "p": [
+     395.0,
+     -170.0,
+     923.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.242,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "lens",
+    "male": "clear_lens_headlights_taillights",
+    "female": "main_outer_body_shell",
+    "p": [
+     52.5,
+     0.0,
+     906.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": null,
+    "depth": null,
+    "back": null,
+    "fdepth": null,
+    "blind": false,
+    "measured_gap_mm": 0.25,
+    "female_check": null
+   },
+   {
+    "kind": "lens",
+    "male": "clear_lens_headlights_taillights",
+    "female": "main_outer_body_shell",
+    "p": [
+     52.5,
+     0.0,
+     906.0
+    ],
+    "axis": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "male_d": null,
+    "depth": null,
+    "back": null,
+    "fdepth": null,
+    "blind": false,
+    "measured_gap_mm": 0.25,
+    "female_check": null
+   },
+   {
+    "kind": "lens",
+    "male": "clear_lens_headlights_taillights",
+    "female": "tailgate_rear_hatch",
+    "p": [
+     4668.5,
+     0.0,
+     1192.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": null,
+    "depth": null,
+    "back": null,
+    "fdepth": null,
+    "blind": false,
+    "measured_gap_mm": 0.25,
+    "female_check": null
+   },
+   {
+    "kind": "lens",
+    "male": "clear_lens_headlights_taillights",
+    "female": "tailgate_rear_hatch",
+    "p": [
+     4668.5,
+     0.0,
+     1192.0
+    ],
+    "axis": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "male_d": null,
+    "depth": null,
+    "back": null,
+    "fdepth": null,
+    "blind": false,
+    "measured_gap_mm": 0.25,
+    "female_check": null
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "tailgate_rear_hatch",
+    "p": [
+     4632.5,
+     420.0,
+     905.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.242,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "main_outer_body_shell",
+    "p": [
+     4632.5,
+     420.0,
+     855.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.242,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "tailgate_rear_hatch",
+    "p": [
+     4632.5,
+     -420.0,
+     905.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.242,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "main_outer_body_shell",
+    "p": [
+     4632.5,
+     -420.0,
+     855.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.242,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "tailgate_rear_hatch",
+    "p": [
+     4253.5,
+     -300.0,
+     1562.7494199528082
+    ],
+    "axis": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.239,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "removable_roof_solar_canopy",
+    "p": [
+     4203.5,
+     -300.0,
+     1562.7494199528082
+    ],
+    "axis": [
+     -1.0,
+     0.0,
+     0.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.239,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "tailgate_rear_hatch",
+    "p": [
+     4253.5,
+     300.0,
+     1562.7494199528082
+    ],
+    "axis": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.239,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "magnet",
+    "male": null,
+    "female": "removable_roof_solar_canopy",
+    "p": [
+     4203.5,
+     300.0,
+     1562.7494199528082
+    ],
+    "axis": [
+     -1.0,
+     0.0,
+     0.0
+    ],
+    "male_d": 3.0,
+    "depth": 2.0,
+    "back": 1.0,
+    "fdepth": 2.25,
+    "blind": true,
+    "measured_gap_mm": 0.239,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "floor": true,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "tyre_on_rim",
+    "male": "wheels_rims_x4",
+    "female": "tires_treaded_x4",
+    "p": [
+     0,
+     0,
+     6.875
+    ],
+    "axis": [
+     0,
+     0,
+     1
+    ],
+    "male_d": null,
+    "depth": null,
+    "measured_gap_mm": 0.25
+   },
+   {
+    "kind": "axle_in_hub",
+    "male": null,
+    "female": "wheels_rims_x4",
+    "p": [
+     0,
+     0,
+     1.0
+    ],
+    "axis": [
+     0,
+     0,
+     1
+    ],
+    "male_d": 3.0,
+    "depth": null,
+    "measured_gap_mm": 0.242
+   }
+  ],
+  "female_features_checked": 89,
+  "female_features_failed": 0
+ },
+ "screws": [
+  {
+   "size": "M2",
+   "length": 3,
+   "head": "button head",
+   "group": "rear_sub",
+   "where": "rear_subframe_suspension to baseplate boss at x 3540, y 360 (from above)",
+   "clamp_mm": 0.85,
+   "engagement_mm": 1.9
+  },
+  {
+   "size": "M2",
+   "length": 3,
+   "head": "button head",
+   "group": "rear_sub",
+   "where": "rear_subframe_suspension to baseplate boss at x 3540, y -360 (from above)",
+   "clamp_mm": 0.85,
+   "engagement_mm": 1.9
+  },
+  {
+   "size": "M2",
+   "length": 5,
+   "head": "button head",
+   "group": "tray",
+   "where": "battery_tray_lower_housing to baseplate boss at x 1550, y 0 (from above)",
+   "clamp_mm": 2.85,
+   "engagement_mm": 1.9
+  },
+  {
+   "size": "M2",
+   "length": 3,
+   "head": "button head",
+   "group": "tray",
+   "where": "battery_tray_lower_housing to baseplate boss at x 1550, y 620 (from above)",
+   "clamp_mm": 0.85,
+   "engagement_mm": 1.9
+  },
+  {
+   "size": "M2",
+   "length": 8,
+   "head": "button head (ISO 7380), self-tapping into the printed pilot",
+   "group": "floor_tub",
+   "where": "cabin floor to battery side frame at x 2887, y 770 (from above)",
+   "clamp_mm": 1.9,
+   "engagement_mm": 6.1
+  },
+  {
+   "size": "M2",
+   "length": 8,
+   "head": "button head (ISO 7380), self-tapping into the printed pilot",
+   "group": "floor_tub",
+   "where": "cabin floor to battery side frame at x 2887, y -770 (from above)",
+   "clamp_mm": 1.9,
+   "engagement_mm": 6.1
+  },
+  {
+   "size": "M2",
+   "length": 12,
+   "head": "button head",
+   "group": "main",
+   "where": "body shell to baseplate at x 360, y 770 (from below)",
+   "clamp_mm": 6.05,
+   "engagement_mm": 5.95
+  },
+  {
+   "size": "M2",
+   "length": 12,
+   "head": "button head",
+   "group": "main",
+   "where": "body shell to baseplate at x 360, y -770 (from below)",
+   "clamp_mm": 6.05,
+   "engagement_mm": 5.95
+  },
+  {
+   "size": "M2",
+   "length": 12,
+   "head": "button head",
+   "group": "main",
+   "where": "body shell to baseplate at x 1450, y 880 (from below)",
+   "clamp_mm": 4.64,
+   "engagement_mm": 7.36
+  },
+  {
+   "size": "M2",
+   "length": 12,
+   "head": "button head",
+   "group": "main",
+   "where": "body shell to baseplate at x 1450, y -880 (from below)",
+   "clamp_mm": 4.64,
+   "engagement_mm": 7.36
+  },
+  {
+   "size": "M2",
+   "length": 10,
+   "head": "button head",
+   "group": "main",
+   "where": "body shell to baseplate at x 4480, y 760 (from below)",
+   "clamp_mm": 2.53,
+   "engagement_mm": 7.47
+  },
+  {
+   "size": "M2",
+   "length": 10,
+   "head": "button head",
+   "group": "main",
+   "where": "body shell to baseplate at x 4480, y -760 (from below)",
+   "clamp_mm": 2.53,
+   "engagement_mm": 7.47
+  },
+  {
+   "size": "M2",
+   "length": 12,
+   "head": "button head",
+   "group": "main",
+   "where": "body shell to baseplate at x 3330, y 880 (from below)",
+   "clamp_mm": 5.11,
+   "engagement_mm": 6.89
+  },
+  {
+   "size": "M2",
+   "length": 12,
+   "head": "button head",
+   "group": "main",
+   "where": "body shell to baseplate at x 3330, y -880 (from below)",
+   "clamp_mm": 5.11,
+   "engagement_mm": 6.89
+  }
+ ],
+ "magnets": [
+  {
+   "where": "cargo deck on its four posts",
+   "count": 8
+  },
+  {
+   "where": "roof canopy to body shell, over the C-pillars",
+   "count": 4
+  },
+  {
+   "where": "hood to body shell ledge",
+   "count": 4
+  },
+  {
+   "where": "hood to the radiator-support posts",
+   "count": 4
+  },
+  {
+   "where": "tailgate bottom edge to body shell",
+   "count": 4
+  },
+  {
+   "where": "tailgate hinge edge to roof canopy",
+   "count": 4
+  }
+ ],
+ "leds": [
+  [
+   "headlight channel behind the headlight lens strip (6 per side)",
+   12,
+   "0603 SMD LED, white, 1.6 x 0.8 x 0.6 mm, pre-wired with 0.1 mm enamelled wire (or 1.8 mm round LEDs)"
+  ],
+  [
+   "tail-bar channel behind the tail lens",
+   6,
+   "0603 SMD LED, red, 1.6 x 0.8 x 0.6 mm, pre-wired"
+  ],
+  [
+   "rear corner lamps in the roof canopy",
+   2,
+   "0603 SMD LED, red, 1.6 x 0.8 x 0.6 mm, pre-wired"
+  ],
+  [
+   "driver cluster light box",
+   1,
+   "0603 SMD LED, white, 1.6 x 0.8 x 0.6 mm, pre-wired"
+  ],
+  [
+   "centre touchscreen light box",
+   1,
+   "0603 SMD LED, white, 1.6 x 0.8 x 0.6 mm, pre-wired"
+  ]
+ ],
+ "optional_toolchains": {
+  "cadquery": true,
+  "solid2": true
+ },
+ "build_minutes": 9.9
+}
