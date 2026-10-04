@@ -1,9 +1,15 @@
 {
  "generator": "generate_model_kit.py",
- "script_sha1": "e2f065b45f91",
- "geometry_script_sha1": "e2f065b45f91",
+ "script_sha1": "f6063e5505c4",
+ "geometry_script_sha1": "f6063e5505c4",
  "dropped_mm3": {
   "main_outer_body_shell": 0.556
+ },
+ "bed_fins_removed_mm3": {
+  "cargo_deck": 0.2224,
+  "main_outer_body_shell": 0.2135,
+  "removable_roof_solar_canopy": 0.036,
+  "hood_solar_bonnet": 0.0303
  },
  "res": 6.0,
  "mirrors": "mirror",
@@ -42,37 +48,39 @@
    "key": "baseplate",
    "orient": "flat underside on the bed",
    "mesh": {
-    "triangles": 100126,
+    "triangles": 99834,
     "watertight": true,
     "edges_2_manifold": true,
     "winding_consistent": true,
     "shells": 1,
     "shells_expected": 1,
-    "volume_cm3": 34.69,
+    "volume_cm3": 34.72,
     "size_mm": [
-     225.21,
-     98.2,
-     24.0
+     225.2083,
+     98.1995,
+     24.0001
     ],
     "bed_z": 0.0,
-    "bed_contact_mm2": 17224.9,
+    "bed_contact_mm2": 17219.1,
     "bed_film_mm2": 0.0,
-    "min_shell_bed_contact_mm2": 17224.9,
-    "mb": 5.01
+    "bed_fins_mm2": [],
+    "bytes": 4991784,
+    "min_shell_bed_contact_mm2": 17219.1,
+    "mb": 4.99
    },
    "export": {
     "pinches_separated": 16,
     "slivers_dropped": 0,
-    "repaired_faces": 0,
+    "repaired_faces": 2,
     "dropped_pieces": 0,
     "dropped_mm3": 0.0
    },
-   "scale": "ok (1:20, \u00b10.002 mm)",
+   "scale": "ok (1:20, \u00b10.000 mm)",
    "path": "stls/01_chassis/chassis_baseplate_m2_bosses.stl",
-   "installed_z_offset_mm": -0.0,
+   "installed_z_offset_mm": -9.2e-05,
    "support": {
-    "bridges": 22,
-    "bridge_area_mm2": 47.1,
+    "bridges": 20,
+    "bridge_area_mm2": 47.0,
     "max_bridge_mm": 3.42,
     "long_bridges": 0,
     "cantilevers": 8,
@@ -102,6 +110,8 @@
     "bed_z": 0.0,
     "bed_contact_mm2": 1099.8,
     "bed_film_mm2": 0.0,
+    "bed_fins_mm2": [],
+    "bytes": 542384,
     "min_shell_bed_contact_mm2": 1099.8,
     "mb": 0.54
    },
@@ -132,7 +142,7 @@
    "key": "rear_sub",
    "orient": "subframe bars on the bed",
    "mesh": {
-    "triangles": 13126,
+    "triangles": 13106,
     "watertight": true,
     "edges_2_manifold": true,
     "winding_consistent": true,
@@ -147,11 +157,13 @@
     "bed_z": 0.0,
     "bed_contact_mm2": 1252.9,
     "bed_film_mm2": 0.0,
+    "bed_fins_mm2": [],
+    "bytes": 655384,
     "min_shell_bed_contact_mm2": 1252.9,
     "mb": 0.66
    },
    "export": {
-    "pinches_separated": 10,
+    "pinches_separated": 6,
     "slivers_dropped": 0,
     "repaired_faces": 0,
     "dropped_pieces": 0,
@@ -192,6 +204,8 @@
     "bed_z": 0.0,
     "bed_contact_mm2": 7720.8,
     "bed_film_mm2": 0.0,
+    "bed_fins_mm2": [],
+    "bytes": 285284,
     "min_shell_bed_contact_mm2": 7720.8,
     "mb": 0.29
    },
@@ -230,13 +244,15 @@
     "shells_expected": 8,
     "volume_cm3": 26.33,
     "size_mm": [
-     88.34,
+     88.3435,
      72.4,
-     6.41
+     6.408
     ],
     "bed_z": 0.0,
     "bed_contact_mm2": 4820.0,
     "bed_film_mm2": 0.0,
+    "bed_fins_mm2": [],
+    "bytes": 2048184,
     "min_shell_bed_contact_mm2": 601.7,
     "mb": 2.05
    },
@@ -247,7 +263,7 @@
     "dropped_pieces": 0,
     "dropped_mm3": 0.0
    },
-   "scale": "ok (1:20, \u00b10.003 mm)",
+   "scale": "ok (1:20, \u00b10.000 mm)",
    "path": "stls/02_powertrain/battery_module_cells_combined.stl",
    "installed_z_offset_mm": 2.05,
    "support": {
@@ -282,6 +298,8 @@
     "bed_z": 0.0,
     "bed_contact_mm2": 631.1,
     "bed_film_mm2": 0.0,
+    "bed_fins_mm2": [],
+    "bytes": 624484,
     "min_shell_bed_contact_mm2": 631.1,
     "mb": 0.62
    },
@@ -327,6 +345,8 @@
     "bed_z": 0.0,
     "bed_contact_mm2": 338.3,
     "bed_film_mm2": 0.0,
+    "bed_fins_mm2": [],
+    "bytes": 254784,
     "min_shell_bed_contact_mm2": 338.3,
     "mb": 0.25
    },
@@ -365,13 +385,15 @@
     "shells_expected": 2,
     "volume_cm3": 0.58,
     "size_mm": [
-     133.12,
+     133.1187,
      90.6,
      13.3
     ],
     "bed_z": 0.0,
     "bed_contact_mm2": 245.6,
     "bed_film_mm2": 0.0,
+    "bed_fins_mm2": [],
+    "bytes": 276184,
     "min_shell_bed_contact_mm2": 53.5,
     "mb": 0.28
    },
@@ -382,7 +404,7 @@
     "dropped_pieces": 0,
     "dropped_mm3": 0.0
    },
-   "scale": "ok (1:20, \u00b10.001 mm)",
+   "scale": "ok (1:20, \u00b10.000 mm)",
    "path": "stls/02_powertrain/hv_wiring_harness_conduits.stl",
    "installed_z_offset_mm": 1.2,
    "support": {
@@ -402,32 +424,34 @@
    "key": "floor_tub",
    "orient": "cabin floor flat on the bed; cargo deck upside down beside it",
    "mesh": {
-    "triangles": 9986,
+    "triangles": 11458,
     "watertight": true,
     "edges_2_manifold": true,
     "winding_consistent": true,
     "shells": 2,
     "shells_expected": 2,
-    "volume_cm3": 17.85,
+    "volume_cm3": 17.81,
     "size_mm": [
      167.0,
-     86.34,
+     86.3386,
      35.65
     ],
     "bed_z": 0.0,
-    "bed_contact_mm2": 10147.4,
+    "bed_contact_mm2": 10143.1,
     "bed_film_mm2": 0.0,
-    "min_shell_bed_contact_mm2": 2315.4,
-    "mb": 0.5
+    "bed_fins_mm2": [],
+    "bytes": 572984,
+    "min_shell_bed_contact_mm2": 2315.3,
+    "mb": 0.57
    },
    "export": {
-    "pinches_separated": 6,
+    "pinches_separated": 8,
     "slivers_dropped": 0,
     "repaired_faces": 0,
     "dropped_pieces": 0,
     "dropped_mm3": 0.0
    },
-   "scale": "ok (1:20, \u00b10.001 mm)",
+   "scale": "ok (1:20, \u00b10.000 mm)",
    "path": "stls/03_interior/interior_floor_tub.stl",
    "support": {
     "bridges": 5,
@@ -454,13 +478,15 @@
     "shells_expected": 2,
     "volume_cm3": 30.76,
     "size_mm": [
-     48.01,
+     48.0071,
      65.5,
      54.3
     ],
     "bed_z": 0.0,
     "bed_contact_mm2": 1432.8,
     "bed_film_mm2": 0.0,
+    "bed_fins_mm2": [],
+    "bytes": 77684,
     "min_shell_bed_contact_mm2": 716.4,
     "mb": 0.08
    },
@@ -471,7 +497,7 @@
     "dropped_pieces": 0,
     "dropped_mm3": 0.0
    },
-   "scale": "ok (1:20, \u00b10.003 mm)",
+   "scale": "ok (1:20, \u00b10.000 mm)",
    "path": "stls/03_interior/front_bucket_seats_pair.stl",
    "installed_z_offset_mm": 9.7,
    "support": {
@@ -499,13 +525,15 @@
     "shells_expected": 1,
     "volume_cm3": 37.02,
     "size_mm": [
-     47.58,
+     47.5773,
      62.0,
      54.2
     ],
     "bed_z": 0.0,
     "bed_contact_mm2": 1672.4,
     "bed_film_mm2": 0.0,
+    "bed_fins_mm2": [],
+    "bytes": 74284,
     "min_shell_bed_contact_mm2": 1672.4,
     "mb": 0.07
    },
@@ -516,7 +544,7 @@
     "dropped_pieces": 0,
     "dropped_mm3": 0.0
    },
-   "scale": "ok (1:20, \u00b10.003 mm)",
+   "scale": "ok (1:20, \u00b10.000 mm)",
    "path": "stls/03_interior/rear_bench_seat.stl",
    "installed_z_offset_mm": 9.7,
    "support": {
@@ -551,6 +579,8 @@
     "bed_z": 0.0,
     "bed_contact_mm2": 1178.7,
     "bed_film_mm2": 0.0,
+    "bed_fins_mm2": [],
+    "bytes": 345684,
     "min_shell_bed_contact_mm2": 172.2,
     "mb": 0.35
    },
@@ -589,12 +619,14 @@
     "volume_cm3": 6.12,
     "size_mm": [
      96.0,
-     91.18,
+     91.1785,
      30.0
     ],
     "bed_z": 0.0,
     "bed_contact_mm2": 162.3,
     "bed_film_mm2": 0.0,
+    "bed_fins_mm2": [],
+    "bytes": 964084,
     "min_shell_bed_contact_mm2": 33.2,
     "mb": 0.96
    },
@@ -605,7 +637,7 @@
     "dropped_pieces": 0,
     "dropped_mm3": 0.0
    },
-   "scale": "ok (1:20, \u00b10.001 mm)",
+   "scale": "ok (1:20, \u00b10.000 mm)",
    "path": "stls/03_interior/door_cards_set.stl",
    "installed_z_offset_mm": 13.5,
    "support": {
@@ -625,7 +657,7 @@
    "key": "canopy",
    "orient": "flat belt-line underside on the bed",
    "mesh": {
-    "triangles": 739880,
+    "triangles": 740758,
     "watertight": true,
     "edges_2_manifold": true,
     "winding_consistent": true,
@@ -633,15 +665,17 @@
     "shells_expected": 1,
     "volume_cm3": 245.87,
     "size_mm": [
-     169.32,
-     107.53,
-     30.19
+     168.3199,
+     107.5321,
+     30.192
     ],
     "bed_z": 0.0,
-    "bed_contact_mm2": 11582.7,
+    "bed_contact_mm2": 11582.6,
     "bed_film_mm2": 0.0,
-    "min_shell_bed_contact_mm2": 11582.7,
-    "mb": 36.99
+    "bed_fins_mm2": [],
+    "bytes": 37037984,
+    "min_shell_bed_contact_mm2": 11582.6,
+    "mb": 37.04
    },
    "export": {
     "pinches_separated": 58,
@@ -650,7 +684,7 @@
     "dropped_pieces": 0,
     "dropped_mm3": 0.0
    },
-   "scale": "ok (1:20, \u00b10.002 mm)",
+   "scale": "ok (1:20, \u00b10.000 mm)",
    "path": "stls/04_body_shell/removable_roof_solar_canopy.stl",
    "installed_z_offset_mm": 45.01,
    "support": {
@@ -670,7 +704,7 @@
    "key": "hood",
    "orient": "flat underside on the bed",
    "mesh": {
-    "triangles": 52794,
+    "triangles": 53240,
     "watertight": true,
     "edges_2_manifold": true,
     "winding_consistent": true,
@@ -678,15 +712,17 @@
     "shells_expected": 1,
     "volume_cm3": 13.64,
     "size_mm": [
-     55.71,
+     55.7064,
      81.5,
-     6.89
+     6.894
     ],
     "bed_z": 0.0,
-    "bed_contact_mm2": 3749.5,
+    "bed_contact_mm2": 3749.3,
     "bed_film_mm2": 0.0,
-    "min_shell_bed_contact_mm2": 3749.5,
-    "mb": 2.64
+    "bed_fins_mm2": [],
+    "bytes": 2662084,
+    "min_shell_bed_contact_mm2": 3749.3,
+    "mb": 2.66
    },
    "export": {
     "pinches_separated": 0,
@@ -695,7 +731,7 @@
     "dropped_pieces": 0,
     "dropped_mm3": 0.0
    },
-   "scale": "ok (1:20, \u00b10.004 mm)",
+   "scale": "ok (1:20, \u00b10.000 mm)",
    "path": "stls/04_body_shell/hood_solar_bonnet.stl",
    "installed_z_offset_mm": 36.9,
    "support": {
@@ -715,23 +751,25 @@
    "key": "main",
    "orient": "upright on its sill line",
    "mesh": {
-    "triangles": 638690,
+    "triangles": 641680,
     "watertight": true,
     "edges_2_manifold": true,
     "winding_consistent": true,
     "shells": 1,
     "shells_expected": 1,
-    "volume_cm3": 84.1,
+    "volume_cm3": 84.23,
     "size_mm": [
-     239.92,
-     101.34,
+     239.9233,
+     101.338,
      39.15
     ],
     "bed_z": 0.0,
-    "bed_contact_mm2": 1454.5,
+    "bed_contact_mm2": 1469.4,
     "bed_film_mm2": 0.0,
-    "min_shell_bed_contact_mm2": 1454.5,
-    "mb": 31.93
+    "bed_fins_mm2": [],
+    "bytes": 32084084,
+    "min_shell_bed_contact_mm2": 1469.4,
+    "mb": 32.08
    },
    "export": {
     "pinches_separated": 755,
@@ -740,15 +778,15 @@
     "dropped_pieces": 0,
     "dropped_mm3": 0.0
    },
-   "scale": "ok (1:20, \u00b10.003 mm)",
+   "scale": "ok (1:20, \u00b10.000 mm)",
    "path": "stls/04_body_shell/main_outer_body_shell.stl",
    "installed_z_offset_mm": 7.35,
    "support": {
-    "bridges": 12,
-    "bridge_area_mm2": 655.1,
+    "bridges": 11,
+    "bridge_area_mm2": 643.4,
     "max_bridge_mm": 12.0,
     "long_bridges": 0,
-    "cantilevers": 28,
+    "cantilevers": 31,
     "max_cantilever_mm": 1.92,
     "islands": 71,
     "max_island_mm2": 0.41
@@ -766,15 +804,17 @@
     "winding_consistent": true,
     "shells": 1,
     "shells_expected": 1,
-    "volume_cm3": 10.03,
+    "volume_cm3": 10.04,
     "size_mm": [
-     25.78,
-     68.89,
-     38.58
+     25.7827,
+     68.8927,
+     38.5786
     ],
     "bed_z": 0.0,
     "bed_contact_mm2": 101.6,
     "bed_film_mm2": 0.0,
+    "bed_fins_mm2": [],
+    "bytes": 8447284,
     "min_shell_bed_contact_mm2": 101.6,
     "mb": 8.45
    },
@@ -785,7 +825,7 @@
     "dropped_pieces": 0,
     "dropped_mm3": 0.0
    },
-   "scale": "ok (1:20, \u00b10.003 mm)",
+   "scale": "ok (1:20, \u00b10.000 mm)",
    "path": "stls/04_body_shell/tailgate_rear_hatch.stl",
    "installed_z_offset_mm": 33.75,
    "support": {
@@ -813,13 +853,15 @@
     "shells_expected": 4,
     "volume_cm3": 25.31,
     "size_mm": [
-     74.53,
-     74.53,
+     74.5254,
+     74.5254,
      13.47
     ],
     "bed_z": 0.0,
     "bed_contact_mm2": 2414.0,
     "bed_film_mm2": 0.0,
+    "bed_fins_mm2": [],
+    "bytes": 15023284,
     "min_shell_bed_contact_mm2": 603.5,
     "mb": 15.02
    },
@@ -859,11 +901,13 @@
     "size_mm": [
      84.63,
      84.63,
-     13.75
+     13.745
     ],
     "bed_z": 0.0,
     "bed_contact_mm2": 1869.2,
     "bed_film_mm2": 0.0,
+    "bed_fins_mm2": [],
+    "bytes": 12902484,
     "min_shell_bed_contact_mm2": 467.3,
     "mb": 12.9
    },
@@ -901,13 +945,15 @@
     "shells_expected": 2,
     "volume_cm3": 0.33,
     "size_mm": [
-     233.26,
+     233.2641,
      78.0,
      2.6
     ],
     "bed_z": 0.0,
     "bed_contact_mm2": 246.2,
     "bed_film_mm2": 0.0,
+    "bed_fins_mm2": [],
+    "bytes": 734684,
     "min_shell_bed_contact_mm2": 111.3,
     "mb": 0.73
    },
@@ -918,7 +964,7 @@
     "dropped_pieces": 0,
     "dropped_mm3": 0.0
    },
-   "scale": "ok (1:20, \u00b10.004 mm)",
+   "scale": "ok (1:20, \u00b10.000 mm)",
    "path": "stls/05_wheels_and_hardware/clear_lens_headlights_taillights.stl",
    "support": {
     "bridges": 7,
@@ -978,13 +1024,35 @@
   "tray > baseplate": 3894.836,
   "tray > modules": 1378.858,
   "tray > dashboard": 4.775,
-  "tray > floor_tub": 36.754,
+  "tray > floor_tub": 36.753,
   "dashboard > floor_tub": 214.241,
   "dashboard > seats": 42.848,
-  "main > floor_tub": 1.106
+  "front_sub > main": 3.876,
+  "main > floor_tub": 19.079
  },
  "validation": {
   "interference_mm3": {},
+  "shell_gaps_mm": {
+   "baseplate": 0.246,
+   "front_sub": 0.245,
+   "rear_sub": 0.5,
+   "tray": 0.772,
+   "modules": 1.0,
+   "eaxle_front": 1.0,
+   "eaxle_rear": 1.0,
+   "harness": 0.25,
+   "floor_tub": 0.245,
+   "seats": 1.0,
+   "bench": 1.0,
+   "dashboard": 0.363,
+   "steering_wheel": 1.0,
+   "cargo_deck": 0.955,
+   "tail": 0.398,
+   "canopy": 0.246,
+   "lenses": 0.25,
+   "rims": 1.0,
+   "tyres": 1.0
+  },
   "assembly_paths": {
    "harness": {
     "step": 2,
@@ -1429,6 +1497,35 @@
     }
    },
    {
+    "kind": "cbore",
+    "male": null,
+    "female": "rear_subframe_suspension",
+    "p": [
+     3540.0,
+     425.0,
+     350.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    "male_d": 3.5,
+    "depth": 1.0,
+    "back": 0.5,
+    "fdepth": 1.6499999999999997,
+    "blind": false,
+    "measured_gap_mm": 0.24,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "not_oversize": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
     "kind": "boss",
     "male": "chassis_baseplate_m2_bosses",
     "female": "rear_subframe_suspension",
@@ -1487,6 +1584,35 @@
     }
    },
    {
+    "kind": "cbore",
+    "male": null,
+    "female": "rear_subframe_suspension",
+    "p": [
+     3540.0,
+     -425.0,
+     350.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    "male_d": 3.5,
+    "depth": 1.0,
+    "back": 0.5,
+    "fdepth": 1.6499999999999997,
+    "blind": false,
+    "measured_gap_mm": 0.24,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "not_oversize": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
     "kind": "boss",
     "male": "chassis_baseplate_m2_bosses",
     "female": "battery_tray_lower_housing",
@@ -1545,6 +1671,35 @@
     }
    },
    {
+    "kind": "cbore",
+    "male": null,
+    "female": "battery_tray_lower_housing",
+    "p": [
+     1550.0,
+     0.0,
+     362.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    "male_d": 3.5,
+    "depth": 1.0,
+    "back": 0.5,
+    "fdepth": 2.2500000000000004,
+    "blind": false,
+    "measured_gap_mm": 0.24,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "not_oversize": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
     "kind": "boss",
     "male": "chassis_baseplate_m2_bosses",
     "female": "battery_tray_lower_housing",
@@ -1593,6 +1748,35 @@
     "fdepth": 2.75,
     "blind": false,
     "measured_gap_mm": 0.244,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "not_oversize": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "cbore",
+    "male": null,
+    "female": "battery_tray_lower_housing",
+    "p": [
+     1550.0,
+     120.0,
+     362.0
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    "male_d": 3.5,
+    "depth": 1.0,
+    "back": 0.5,
+    "fdepth": 2.2500000000000004,
+    "blind": false,
+    "measured_gap_mm": 0.24,
     "female_check": {
      "closed": true,
      "wall_04": true,
@@ -2566,7 +2750,7 @@
     "female": "interior_floor_tub",
     "p": [
      2887.0,
-     735.0,
+     760.0,
      390.0
     ],
     "axis": [
@@ -2595,7 +2779,7 @@
     "female": "interior_floor_tub",
     "p": [
      2887.0,
-     -735.0,
+     -760.0,
      390.0
     ],
     "axis": [
@@ -2764,6 +2948,35 @@
     }
    },
    {
+    "kind": "cbore",
+    "male": null,
+    "female": "chassis_baseplate_m2_bosses",
+    "p": [
+     360.0,
+     770.0,
+     220.0062255859375
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.5,
+    "depth": 1.0,
+    "back": 0.5,
+    "fdepth": 1.25,
+    "blind": false,
+    "measured_gap_mm": 0.24,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "not_oversize": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
     "kind": "screw",
     "male": null,
     "female": "chassis_baseplate_m2_bosses",
@@ -2793,25 +3006,25 @@
     }
    },
    {
-    "kind": "screw",
+    "kind": "cbore",
     "male": null,
     "female": "chassis_baseplate_m2_bosses",
     "p": [
-     1450.0,
-     880.0,
-     304.2330322265625
+     360.0,
+     -770.0,
+     220.0062255859375
     ],
     "axis": [
      0.0,
      0.0,
      1.0
     ],
-    "male_d": 2.0,
-    "depth": 2.0,
-    "back": 3.3,
-    "fdepth": 5.338348388671875,
+    "male_d": 3.5,
+    "depth": 1.0,
+    "back": 0.5,
+    "fdepth": 1.25,
     "blind": false,
-    "measured_gap_mm": 0.239,
+    "measured_gap_mm": 0.24,
     "female_check": {
      "closed": true,
      "wall_04": true,
@@ -2827,8 +3040,8 @@
     "female": "chassis_baseplate_m2_bosses",
     "p": [
      1450.0,
-     -880.0,
-     304.2330322265625
+     860.0,
+     277.033447265625
     ],
     "axis": [
      0.0,
@@ -2838,9 +3051,96 @@
     "male_d": 2.0,
     "depth": 2.0,
     "back": 3.3,
-    "fdepth": 5.338348388671875,
+    "fdepth": 6.6983276367187505,
     "blind": false,
     "measured_gap_mm": 0.239,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "not_oversize": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "cbore",
+    "male": null,
+    "female": "chassis_baseplate_m2_bosses",
+    "p": [
+     1450.0,
+     860.0,
+     221.033447265625
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.5,
+    "depth": 1.0,
+    "back": 0.5,
+    "fdepth": 1.25,
+    "blind": false,
+    "measured_gap_mm": 0.24,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "not_oversize": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "screw",
+    "male": null,
+    "female": "chassis_baseplate_m2_bosses",
+    "p": [
+     1450.0,
+     -860.0,
+     276.2054443359375
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 2.0,
+    "back": 3.3,
+    "fdepth": 6.739727783203126,
+    "blind": false,
+    "measured_gap_mm": 0.239,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "not_oversize": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "cbore",
+    "male": null,
+    "female": "chassis_baseplate_m2_bosses",
+    "p": [
+     1450.0,
+     -860.0,
+     220.2054443359375
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.5,
+    "depth": 1.0,
+    "back": 0.5,
+    "fdepth": 1.25,
+    "blind": false,
+    "measured_gap_mm": 0.24,
     "female_check": {
      "closed": true,
      "wall_04": true,
@@ -2880,6 +3180,35 @@
     }
    },
    {
+    "kind": "cbore",
+    "male": null,
+    "female": "chassis_baseplate_m2_bosses",
+    "p": [
+     4480.0,
+     760.0,
+     290.4798583984375
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.5,
+    "depth": 1.0,
+    "back": 0.5,
+    "fdepth": 1.25,
+    "blind": false,
+    "measured_gap_mm": 0.24,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "not_oversize": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
     "kind": "screw",
     "male": null,
     "female": "chassis_baseplate_m2_bosses",
@@ -2909,25 +3238,25 @@
     }
    },
    {
-    "kind": "screw",
+    "kind": "cbore",
     "male": null,
     "female": "chassis_baseplate_m2_bosses",
     "p": [
-     3330.0,
-     880.0,
-     294.8759765625
+     4480.0,
+     -760.0,
+     290.4798583984375
     ],
     "axis": [
      0.0,
      0.0,
      1.0
     ],
-    "male_d": 2.0,
-    "depth": 2.0,
-    "back": 3.3,
-    "fdepth": 5.806201171875,
+    "male_d": 3.5,
+    "depth": 1.0,
+    "back": 0.5,
+    "fdepth": 1.25,
     "blind": false,
-    "measured_gap_mm": 0.239,
+    "measured_gap_mm": 0.24,
     "female_check": {
      "closed": true,
      "wall_04": true,
@@ -2943,8 +3272,8 @@
     "female": "chassis_baseplate_m2_bosses",
     "p": [
      3330.0,
-     -880.0,
-     294.838623046875
+     860.0,
+     276.908935546875
     ],
     "axis": [
      0.0,
@@ -2954,9 +3283,96 @@
     "male_d": 2.0,
     "depth": 2.0,
     "back": 3.3,
-    "fdepth": 5.8080688476562505,
+    "fdepth": 6.7045532226562505,
     "blind": false,
     "measured_gap_mm": 0.239,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "not_oversize": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "cbore",
+    "male": null,
+    "female": "chassis_baseplate_m2_bosses",
+    "p": [
+     3330.0,
+     860.0,
+     220.908935546875
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.5,
+    "depth": 1.0,
+    "back": 0.5,
+    "fdepth": 1.25,
+    "blind": false,
+    "measured_gap_mm": 0.24,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "not_oversize": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "screw",
+    "male": null,
+    "female": "chassis_baseplate_m2_bosses",
+    "p": [
+     3330.0,
+     -860.0,
+     276.0933837890625
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 2.0,
+    "depth": 2.0,
+    "back": 3.3,
+    "fdepth": 6.745330810546875,
+    "blind": false,
+    "measured_gap_mm": 0.239,
+    "female_check": {
+     "closed": true,
+     "wall_04": true,
+     "wide": true,
+     "not_oversize": true,
+     "floor": null,
+     "open_at": null
+    }
+   },
+   {
+    "kind": "cbore",
+    "male": null,
+    "female": "chassis_baseplate_m2_bosses",
+    "p": [
+     3330.0,
+     -860.0,
+     220.0933837890625
+    ],
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "male_d": 3.5,
+    "depth": 1.0,
+    "back": 0.5,
+    "fdepth": 1.25,
+    "blind": false,
+    "measured_gap_mm": 0.24,
     "female_check": {
      "closed": true,
      "wall_04": true,
@@ -3791,7 +4207,7 @@
    2.2,
    2.6
   ],
-  "female_features_checked": 89,
+  "female_features_checked": 101,
   "female_features_failed": 0
  },
  "screws": [
@@ -3836,7 +4252,7 @@
    "length": 8,
    "head": "button head (ISO 7380), self-tapping into the printed pilot",
    "group": "floor_tub",
-   "where": "cabin floor to battery side frame at x 144.3, y +36.8 mm (from above)",
+   "where": "cabin floor to battery side frame at x 144.3, y +38.0 mm (from above)",
    "clamp_mm": 1.65,
    "engagement_mm": 6.35
   },
@@ -3845,7 +4261,7 @@
    "length": 8,
    "head": "button head (ISO 7380), self-tapping into the printed pilot",
    "group": "floor_tub",
-   "where": "cabin floor to battery side frame at x 144.3, y -36.8 mm (from above)",
+   "where": "cabin floor to battery side frame at x 144.3, y -38.0 mm (from above)",
    "clamp_mm": 1.65,
    "engagement_mm": 6.35
   },
@@ -3872,18 +4288,18 @@
    "length": 12,
    "head": "button head",
    "group": "main",
-   "where": "body shell to baseplate at x 72.5, y +44.0 mm (from below)",
-   "clamp_mm": 4.64,
-   "engagement_mm": 7.36
+   "where": "body shell to baseplate at x 72.5, y +43.0 mm (from below)",
+   "clamp_mm": 6.0,
+   "engagement_mm": 6.0
   },
   {
    "size": "M2",
    "length": 12,
    "head": "button head",
    "group": "main",
-   "where": "body shell to baseplate at x 72.5, y -44.0 mm (from below)",
-   "clamp_mm": 4.64,
-   "engagement_mm": 7.36
+   "where": "body shell to baseplate at x 72.5, y -43.0 mm (from below)",
+   "clamp_mm": 6.04,
+   "engagement_mm": 5.96
   },
   {
    "size": "M2",
@@ -3908,18 +4324,18 @@
    "length": 12,
    "head": "button head",
    "group": "main",
-   "where": "body shell to baseplate at x 166.5, y +44.0 mm (from below)",
-   "clamp_mm": 5.11,
-   "engagement_mm": 6.89
+   "where": "body shell to baseplate at x 166.5, y +43.0 mm (from below)",
+   "clamp_mm": 6.0,
+   "engagement_mm": 6.0
   },
   {
    "size": "M2",
    "length": 12,
    "head": "button head",
    "group": "main",
-   "where": "body shell to baseplate at x 166.5, y -44.0 mm (from below)",
-   "clamp_mm": 5.11,
-   "engagement_mm": 6.89
+   "where": "body shell to baseplate at x 166.5, y -43.0 mm (from below)",
+   "clamp_mm": 6.05,
+   "engagement_mm": 5.95
   }
  ],
  "magnets": [
@@ -3974,5 +4390,5 @@
   "cadquery": true,
   "solid2": true
  },
- "build_minutes": 11.2
+ "build_minutes": 9.9
 }
